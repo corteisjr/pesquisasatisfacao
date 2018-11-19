@@ -1,0 +1,8 @@
+body {
+    background: #d0cdcd;
+}
+
+#card-radius{
+    border-radius: 15px;
+    //margin-top:6em
+}

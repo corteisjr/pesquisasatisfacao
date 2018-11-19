@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% load material_form %}
+
+{% block container %}
+
+    <div class="card larger" id="card-radius">
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+            <div class="card-content">
+                {% form %}
+                    {% part form.question prefix %}<i class="material-icons prefix">question_answer</i>{% endpart %}
+                    {% attr form.level 'group' class append %}inline{% endattr %}
+                {% endform %}
+            </div>
+
+            <div class="card-action">
+                <div class="right-align">
+                    <button class="waves-effect waves-light btn" type="submit">Registrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

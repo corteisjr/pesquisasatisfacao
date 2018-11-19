@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% load material_form %}
+{% block container %}
+
+    <div class="card larger" id="card-radius">
+        <table class="responsive-table highlight" tastyle="width:100%">
+            <thead class="#cfd8dc blue-grey lighten-4">
+                <tr>
+                    <th>Id.</th>
+                    <th>Cód. Alterdata</th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                </tr>
+            </thead>
+            {% for person in persons %}
+                <tr>
+                    <td>
+                        <a href="{{ person.get_absolute_url }}">{{ person.id|linebreaks }}</a>
+                    </td>
+                    <td>{{ person.cdalterdata|linebreaks }}</td>
+                    <td>{{ person.name|linebreaks }}</td>
+                    <td>{{ person.phone|linebreaks }}</td>
+                </tr>
+            {% empty %}
+                <li>
+                    Sem registros
+                </li>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

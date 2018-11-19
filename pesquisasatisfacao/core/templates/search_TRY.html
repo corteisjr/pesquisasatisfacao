@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% load material_form %}
+
+{% block container %}
+
+    <div class="card larger" id="card-radius">
+        <form method="POST">
+            {% csrf_token %}
+            {% form %}
+            {% endform %}
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+
+{% endblock %}
