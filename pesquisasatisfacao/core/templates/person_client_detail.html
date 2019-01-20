@@ -15,6 +15,7 @@
     <table>
         <thead class="#cfd8dc blue-grey lighten-4">
             <tr>
+                <th>ID</th>
                 <th>Período</th>
                 <th>Entrevistado</th>
             </tr>
@@ -23,7 +24,10 @@
         <tbody>
             {% for search in searchs %}
                 <tr>
-                    <td>{{ search.search_key|linebreaks }}</td>
+                    <td>
+                        <a href="{% url 'person_client_detail' pk=search.person %}">{{ search.id }}</a>
+                    </td>
+                    <td>{{ search.search_key }}</td>
                     <td>{{ search.researched }}</td>
                 </tr>
             {% empty %}

@@ -1,7 +1,8 @@
 from django import forms
 from material import *
-from django.template import Template
-from pesquisasatisfacao.core.models import Person, Client, Question, Search
+
+from pesquisasatisfacao.core.models import Person, Client, Question, Search, SearchItem
+from django.forms import inlineformset_factory
 
 
 class PersonForm(forms.ModelForm):
@@ -23,9 +24,6 @@ class PersonForm(forms.ModelForm):
 
 
 class ClientForm(forms.ModelForm):
-    #ADICIONANDO CARACTERÍSTICAS AOS CAMPOS
-    #last_search = forms.DateField(label='Última pesquisa', widget=forms.TextInput(attrs={'class': 'datepicker'}))
-    #last_search = forms.DateField(label='Última pesquisa', widget=forms.TextInput(attrs={'class': 'monthpicker'}))
 
     class Meta:
         model = Client
@@ -38,14 +36,13 @@ class ClientForm(forms.ModelForm):
 
     layout = Layout(
         Fieldset("Inclua um Cliente",
-                 Row(Span4('cdalterdata'),Span8('name'), ),
+                 Row(Span4('cdalterdata'), Span8('name'), ),
                  Row(Span4('phone'), Span8('last_search'))
                  )
     )
 
 
 class QuestionForm(forms.ModelForm):
-    #ADICIONANDO CARACTERÍSTICAS AOS CAMPOS
 
     level = forms.ChoiceField(
         choices=(
@@ -73,7 +70,7 @@ class QuestionForm(forms.ModelForm):
     )
 
 
-class SearchForm(forms.ModelForm):
+class SearchFormCompleto(forms.ModelForm):
 
     class Meta:
         model = Search
@@ -83,3 +80,15 @@ class SearchForm(forms.ModelForm):
             'researched',
         )
 
+
+class SearchForm(forms.ModelForm):
+
+    class Meta:
+        model = Search
+        exclude = ()
+
+    layout = Layout(
+        Fieldset("Responda com Calma.", Row('person', 'search_key'), Row('researched'),))
+
+
+SearchItemFormSet = inlineformset_factory(Search, SearchItem, can_delete=True, fields=('question', 'response'), extra=3)

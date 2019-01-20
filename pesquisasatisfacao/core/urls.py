@@ -12,10 +12,13 @@ urlpatterns = [
 
     path('cliente/novo/', views.person_client_create, name='person_client_create'),
     path('cliente/listar/', views.person_client_list, name='person_client_list'),
-    path('cliente/<int:pk>/', views.person_client_detail, name='person_client_detail'),
+    path('cliente/<int:pk>/pesquisas/', views.person_client_detail, name='person_client_detail'),
+
 
     path('pergunta/nova/', views.question_create, name='question_create'),
     path('perguntas/listar/', views.question_list, name='question_list'),
+
     path('pesquisa/nova/', views.seach_create, name='seach_create'),
+    path('pesquisa/criar/', views.pesquisa_create, name='pesquisa_create'),
     path('pesquisa/listar/', views.search_list, name='search_list'),
 ]

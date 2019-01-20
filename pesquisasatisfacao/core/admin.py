@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from pesquisasatisfacao.core.models import Person, Client, Search, Question
+from pesquisasatisfacao.core.models import Person, Client, Search, Question, SearchItem
 
 
 @admin.register(Person)
@@ -18,8 +18,15 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Search)
 class SearchAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'id', 'search_key', 'person', 'researched', 'question', 'response')
+    list_display = ('__str__', 'id', 'search_key', 'person', 'researched')
     #search_fields = ('cdalterdata', 'name', 'email', 'last_search')
+
+
+@admin.register(SearchItem)
+class SearchItemAdmin(admin.ModelAdmin):
+    list_display = ['search', 'question', 'response']
+
+#DELETE FROM WFISCAL.IV00005
 
 
 @admin.register(Question)

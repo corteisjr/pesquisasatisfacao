@@ -4,7 +4,7 @@
 {% block container %}
 
     <div class="card larger" id="card-radius">
-        <table class="responsive-table highlight" tastyle="width:100%">
+        <table class="highlight">
             <thead class="#cfd8dc blue-grey lighten-4">
                 <tr>
                     <th>Id.</th>
@@ -17,11 +17,14 @@
             {% for client in clients %}
                 <tr>
                     <td>
-                        <a href="{{ client.get_absolute_url }}">{{ client.id|linebreaks }}</a>
+                        {{ client.id|linebreaks }}
                     </td>
-                    <td>{{ client.cdalterdata|linebreaks }}</td>
                     <td>
-                        <a href="{{ client.get_absolute_url }}">{{ client.name|linebreaks }}</a>
+                        <a href="{% url 'person_client_detail' pk=client.id %}">{{ client.cdalterdata|linebreaks }}</a>
+                    </td>
+                    <td>
+                        {{ client.name|linebreaks }}
+                        <!--<a href="{% url 'person_client_detail' pk=client.pk %}">{{ client.name|linebreaks }}</a>-->
                     </td>
                     <td>{{ client.phone|linebreaks }}</td>
                     <td>{{ client.last_search }}</td>
