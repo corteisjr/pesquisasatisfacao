@@ -133,7 +133,7 @@ class SearchItem(models.Model):
         'core.search', related_name='Periodo', on_delete=models.CASCADE, verbose_name="Período da Pesquisa")
     question = models.ForeignKey(
         'core.question', related_name='Pergunta', on_delete=models.CASCADE, verbose_name="Pergunta")
-    response = models.BooleanField(default=False)
+    response = models.BooleanField()
 
     class Meta:
         verbose_name = 'Pesquisa Detalhe'

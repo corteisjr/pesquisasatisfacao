@@ -91,4 +91,7 @@ class SearchForm(forms.ModelForm):
         Fieldset("Responda com Calma.", Row('person', 'search_key'), Row('researched'),))
 
 
-SearchItemFormSet = inlineformset_factory(Search, SearchItem, can_delete=True, fields=('question', 'response'), extra=3)
+SearchItemFormSet = inlineformset_factory(Search, SearchItem,
+                                          widgets={'response': forms.BooleanField(),},
+                                          can_delete=True,
+                                          fields=('question', 'response'), extra=3)
