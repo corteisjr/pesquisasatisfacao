@@ -123,10 +123,17 @@ def seach_create(request):
             return HttpResponseRedirect('/pesquisa/listar')
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            print(form)
+            # person_instance = Person.objects.get(pk=request.session["person_id"])
             return render(request, 'seach_create.html', {'form': form})
     else:
-        context = {'form': SearchForm()}
+        # Recupera variável da session
+        pessoa_id = request.session['person_id']
+
+        context = {'form': SearchForm(initial={'person': pessoa_id})}
+
+        # Exclui variável da session
+        del request.session['person_id']
+
         return render(request, 'seach_create.html', context)
 
 
@@ -138,11 +145,15 @@ def search_list(request):
 
 
 def person_client_detail(request, pk):
+    # client = get_object_or_404(Client, person_id=pk)
     clients = Client.objects.select_related('person_ptr').filter(person_ptr=pk)
     searchs = Search.objects.select_related('person').filter(person_id=pk).values('id',
                                                                                   'search_key',
                                                                                   'researched',
                                                                                   'person')
+    # Cria variável na session
+    request.session['person_id'] = pk
+
     #.distinct()
 
     context = {
@@ -152,7 +163,6 @@ def person_client_detail(request, pk):
 
     print(context)
     return render(request, 'person_client_detail.html', context)
-
 
 
 #
@@ -179,7 +189,6 @@ def person_client_detail(request, pk):
 #             print('Não existe')
 #
 #     return HttpResponseRedirect('/')
-
 
 class SearchDetailWiew(TemplateView):
     template_name = 'search.html'
