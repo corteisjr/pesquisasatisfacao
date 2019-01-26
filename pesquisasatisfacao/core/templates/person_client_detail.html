@@ -25,9 +25,14 @@
             {% for search in searchs %}
                 <tr>
                     <td>
-                        <a href="{% url 'person_client_detail' pk=search.person %}">{{ search.id }}</a>
+                        <a href="{% url 'pesquisa_update' pk=search.id %}">{{ search.id|linebreaks }}</a>
                     </td>
-                    <td>{{ search.search_key }}</td>
+
+                    <td>
+                        <a href="{% url 'pesquisa_update' pk=search.id %}">{{ search.search_key|linebreaks }}</a>
+                    </td>
+
+ 
                     <td>{{ search.researched }}</td>
                 </tr>
             {% empty %}

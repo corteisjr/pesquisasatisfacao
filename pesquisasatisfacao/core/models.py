@@ -90,23 +90,56 @@ class Search(models.Model):
         ordering = ('-participation_on',)
 
     def get_absolute_url(self):
-        return reverse('person_client_detail', args=[str(self.pk)])
+        return reverse('pesquisa_update', args=[str(self.pk)])
+
+    # def get_absolute_url(self):
+    #     return reverse('catalog:category_list', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.search_key
 
 
+# def post_save_search(sender, instance, created,  **kwargs):
+#     if created:
+#         questions = Question.objects.all()
+        #search = Search.objects.filter(pk=instance.pk)
+# WTTD
+        # for question in questions:
+        #     obj = SearchItem(search_id=instance.pk, question_id=question.pk, response=False)
+        #     from django.core.exceptions import ValidationError
+        #     try:
+        #         print(created, obj.search, obj.question)
+        #         obj.full_clean()
+        #         obj.save()
+        #     except ValidationError:
+        #         # O ideal nesse caso seria enviar algum tipo de mensagem ao usuário informando que a pergunta não foi salva
+        #         # mas aqui estou apenas tratando a exceção e passando direto pelo erro.
+        #         pass
+
+
+# Elysson funciona com Pesquisa/nova
+#         for question in questions:
+#             try:
+#                 print(created, instance.pk, question.pk)
+#                 SearchItem.objects.get_or_create(
+#                     search_id=instance.pk,
+#                     question_id=question.pk,
+#                     response=False,
+#                 )
+#             except SearchItem.DoesNotExist:
+#                 continue  # ou pass
+
+
 def post_save_search(sender, instance, created,  **kwargs):
     if created:
         questions = Question.objects.all()
-        search = Search.objects.filter(pk=instance.pk)
-
-        print(search)
+        # search = Search.objects.filter(pk=instance.pk)
 
         lista = []
 
         # print(worksheet.nrows)
         for question in questions:
+            print('search_id=', instance.pk, 'question_id=', question.pk)
             lista.append(
                 SearchItem(search_id=instance.pk,
                            question_id=question.pk,
@@ -133,11 +166,12 @@ class SearchItem(models.Model):
         'core.search', related_name='Periodo', on_delete=models.CASCADE, verbose_name="Período da Pesquisa")
     question = models.ForeignKey(
         'core.question', related_name='Pergunta', on_delete=models.CASCADE, verbose_name="Pergunta")
-    response = models.BooleanField()
+    response = models.BooleanField('Resposta')
 
     class Meta:
         verbose_name = 'Pesquisa Detalhe'
         verbose_name_plural = 'Pesquisas Detalhe'
+        unique_together = (('search', 'question'),)
         ordering = ('-question',)
 
     def __str__(self):

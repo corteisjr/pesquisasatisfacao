@@ -20,5 +20,6 @@ urlpatterns = [
 
     path('pesquisa/nova/', views.seach_create, name='seach_create'),
     path('pesquisa/criar/', views.pesquisa_create, name='pesquisa_create'),
+    path('pesquisa/<int:pk>/editar/', views.pesquisa_update, name='pesquisa_update'),
     path('pesquisa/listar/', views.search_list, name='search_list'),
 ]

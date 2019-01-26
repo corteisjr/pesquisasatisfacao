@@ -18,7 +18,7 @@
                 {% for search in seachs %}
                     <tr>
                         <td>
-                            {{ search.id|linebreaks }}</a>
+                            <a href="{{ search.get_absolute_url }}">{{ search.id|linebreaks }}</a>
                         </td>
                         <td>{{ search.search_key }}</td>
                         <td>{{ search.researched }}</td>

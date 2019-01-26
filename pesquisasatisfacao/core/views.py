@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import TemplateView
 
@@ -110,6 +110,7 @@ def question_list(request):
 
 
 def seach_create(request):
+
     if request.method == 'POST':
         form = SearchForm(request.POST)
 
@@ -123,7 +124,7 @@ def seach_create(request):
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
             print(form)
-            return render(request, 'seach_create.html', {'form':form})
+            return render(request, 'seach_create.html', {'form': form})
     else:
         context = {'form': SearchForm()}
         return render(request, 'seach_create.html', context)
@@ -153,58 +154,31 @@ def person_client_detail(request, pk):
     return render(request, 'person_client_detail.html', context)
 
 
-def seach_create2(request):
-    #person_id = get_object_or_404(Client, person_id=person_id)
-    # search_key = get_object_or_404(Client, search_key=form.cleaned_data['search_key'], )
 
-    template_name = 'seach_create.html'
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():
-
-            request.session['search_key'] = form.cleaned_data['search_key'],
-            data = dict(
-                search_key=form.cleaned_data['search_key'],
-                person=form.cleaned_data['person'],
-                researched=form.cleaned_data['researched'],
-                questions=Question.objects.all(),
-            )
-            #criar_pesquisa(**data)
-            addQuestions(**data)
-            # Não usar o método save().
-            # form.save()
-            #return HttpResponseRedirect('perguntas/listar/')
-            return redirect('search_list')
-    else:
-        form = SearchForm()
-    context = {'form': form}
-    return render(request, template_name, context)
-
-
-def addQuestions(**data):
-    #person = Person.objects.get(pk=1)
-    questions = Question.objects.all()
-
-    for question in questions:
-
-        try:
-            Search.objects.get(
-                search_key=data['search_key'],
-                person=data['person'],
-                researched=data['researched'],
-                question=question,
-            )
-            print('existe')
-        except Search.DoesNotExist:
-            Search.objects.get_or_create(
-                search_key=data['search_key'],
-                person=data['person'],
-                researched=data['researched'],
-                question=question
-            )
-            print('Não existe')
-
-    return HttpResponseRedirect('/')
+#
+# def addQuestions(**data):
+#     questions = Question.objects.all()
+#
+#     for question in questions:
+#
+#         try:
+#             Search.objects.get(
+#                 search_key=data['search_key'],
+#                 person=data['person'],
+#                 researched=data['researched'],
+#                 question=question,
+#             )
+#             print('existe')
+#         except Search.DoesNotExist:
+#             Search.objects.get_or_create(
+#                 search_key=data['search_key'],
+#                 person=data['person'],
+#                 researched=data['researched'],
+#                 question=question
+#             )
+#             print('Não existe')
+#
+#     return HttpResponseRedirect('/')
 
 
 class SearchDetailWiew(TemplateView):
@@ -300,7 +274,6 @@ def pesquisa_create(request):
         form = SearchForm(request.POST)
         formset = SearchItemFormSet(request.POST)
 
-
         if form.is_valid() and formset.is_valid():
             with transaction.atomic():
 
@@ -314,6 +287,40 @@ def pesquisa_create(request):
         # initial={'author': request.user}
         formset = SearchItemFormSet()
 
+    forms = [formset.empty_form] + formset.forms
+    context = {'form': form, 'formset': formset, 'forms': forms}
+    return render(request, 'receipt_form.html', context)
+
+
+def pesquisa_update(request, pk):
+    # Pega a chave da URL acima com (request, pk)
+    # joga na variável invoice na linha abaixo passando o modelo MESTRE e os parâmetros que desejo como filtro
+    search = get_object_or_404(Search, pk=pk)
+    print(request.method)
+    if request.method == 'POST':
+        # Os formulários InvoiceForm receberá o request.POST com os campos em branco
+        form = SearchForm(request.POST, instance=search)
+        formset = SearchItemFormSet(request.POST, instance=search)
+
+        # Valida os formulários MESTRE(InvoiceForm) e DETALHE(ItemFormSet)
+        print(form.errors, formset.errors)
+        if form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                form.save()
+                formset.save()
+
+            return redirect('/cliente/listar/')
+    else:
+        # Caso não seja POST ele trará o formulário com as informações preenchidas do parâmetro invoice
+        # que pegamos da URL quando passamos o request de pk na entrada da função acima.
+        form = SearchForm(instance=search)
+        formset = SearchItemFormSet(instance=search)
+
+    # Passamos os dois forms para uma variável com um nome qualquer (Neste caso usamos o nome "forms" afim de dar
+    # a idéia
+    # de mais de um formulário conforme abaixo:
+    # Na linha context passamos também os dois contextos e
+    # por fim na linha final passamos o retorno da função onde chamamos o template com o context.
     forms = [formset.empty_form] + formset.forms
     context = {'form': form, 'formset': formset, 'forms': forms}
     return render(request, 'receipt_form.html', context)

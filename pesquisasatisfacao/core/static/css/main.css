@@ -6,3 +6,12 @@ body {
     border-radius: 15px;
     //margin-top:6em
 }
+
+/*.chk_box input[type='checkbox'] {
+position: static!important;
+left: 0px!important;
+opacity: 1!important;
+visibility: visible!important;
+pointer-events: all!important;
+}*/
+

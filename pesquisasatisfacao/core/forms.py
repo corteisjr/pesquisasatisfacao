@@ -85,13 +85,14 @@ class SearchForm(forms.ModelForm):
 
     class Meta:
         model = Search
+        fields = '__all__'
         exclude = ()
 
     layout = Layout(
-        Fieldset("Responda com Calma.", Row('person', 'search_key'), Row('researched'),))
+        Fieldset("Responda com Calma.", Row('person', 'search_key'), Row('researched',),))
 
 
 SearchItemFormSet = inlineformset_factory(Search, SearchItem,
-                                          widgets={'response': forms.BooleanField(),},
+                                          exclude=('id',),
                                           can_delete=True,
-                                          fields=('question', 'response'), extra=3)
+                                          fields=('question', 'response'), extra=1)
