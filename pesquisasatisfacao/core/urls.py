@@ -22,4 +22,7 @@ urlpatterns = [
     path('pesquisa/criar/', views.pesquisa_create, name='pesquisa_create'),
     path('pesquisa/<int:pk>/editar/', views.pesquisa_update, name='pesquisa_update'),
     path('pesquisa/listar/', views.search_list, name='search_list'),
+
+    path('pesquisa/dash/', views.question_level_view, name='question_level_view'),
+    path('pesquisa/dash2/', views.question_level_view2, name='question_level_view2'),
 ]

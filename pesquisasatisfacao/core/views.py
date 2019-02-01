@@ -1,4 +1,7 @@
+from django.core.serializers import json
+import json
 from django.db import transaction
+from django.db.models import Count, Q
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, render_to_response, get_object_or_404
@@ -6,7 +9,7 @@ from django.template import RequestContext
 from django.views.generic import TemplateView
 
 from pesquisasatisfacao.core.forms import QuestionForm, ClientForm, PersonForm, SearchForm, SearchItemFormSet
-from pesquisasatisfacao.core.models import Search, Question, Client, Person
+from pesquisasatisfacao.core.models import Search, Question, Client, Person, SearchItem
 
 
 def home(request):
@@ -111,30 +114,37 @@ def question_list(request):
 
 def seach_create(request):
 
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
+        if request.method == 'POST':
+            form = SearchForm(request.POST)
 
-        if form.is_valid():
-            print('<<<<==== FORM VALIDO ====>>>>')
-            new = form.save(commit=False)
-            new.save()
-            #form.save_m2m()
+            if form.is_valid():
+                print('<<<<==== FORM VALIDO ====>>>>')
+                new = form.save(commit=False)
+                new.save()
+                # form.save_m2m()
 
-            return HttpResponseRedirect('/pesquisa/listar')
+                return HttpResponseRedirect('/pesquisa/listar')
+            else:
+                print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+                # person_instance = Person.objects.get(pk=request.session["person_id"])
+                return render(request, 'seach_create.html', {'form': form})
         else:
-            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            # person_instance = Person.objects.get(pk=request.session["person_id"])
-            return render(request, 'seach_create.html', {'form': form})
-    else:
-        # Recupera variável da session
-        pessoa_id = request.session['person_id']
+            if 'person_id' in request.session:
+                # Recupera variável da session
+                pessoa_id = request.session['person_id']
+                from datetime import date
+                context = {'form': SearchForm(initial={'person': pessoa_id,
+                                                       'search_key': date.today().strftime('%m-%Y')})}
+                # Caso precise preencher mais de um campo no form.
+                # context = {'form': SearchForm(initial={'person': pessoa_id, 'search_key': '11-2018'})}
 
-        context = {'form': SearchForm(initial={'person': pessoa_id})}
+                # Exclui variável da session
+                del request.session['person_id']
 
-        # Exclui variável da session
-        del request.session['person_id']
-
-        return render(request, 'seach_create.html', context)
+                return render(request, 'seach_create.html', context)
+            else:
+                # Caso person_id não exista na session ele redireciona para lista de clientes pesquisados.
+                return HttpResponseRedirect('/cliente/listar')
 
 
 def search_list(request):
@@ -147,24 +157,140 @@ def search_list(request):
 def person_client_detail(request, pk):
     # client = get_object_or_404(Client, person_id=pk)
     clients = Client.objects.select_related('person_ptr').filter(person_ptr=pk)
-    searchs = Search.objects.select_related('person').filter(person_id=pk).values('id',
-                                                                                  'search_key',
-                                                                                  'researched',
-                                                                                  'person')
+    searchs = Search.objects.select_related('person', 'search').filter(person_id=pk).values('id', 'search_key',
+                                                                                            'researched', 'person')
+
+    dataset = SearchItem.objects.select_related().filter(search__person_id=pk).values('question__level').annotate(
+        true_count=Count('question__level', filter=Q(response=True)), false_count=Count('question__level',
+                                                                                        filter=Q(response=False))
+    ).order_by('question__level')
+
+    categories = list()
+    true_series_data = list()
+    false_series_data = list()
+
+    for entry in dataset:
+        if entry['question__level'] == '0':
+            qlevel = 'Dependência'
+        elif entry['question__level'] == '1':
+            qlevel = 'Confiança'
+        elif entry['question__level'] == '2':
+            qlevel = 'Compromentimento'
+        else:
+            qlevel = 'Preditiva'
+
+        categories.append(qlevel)
+        true_series_data.append(entry['true_count'])
+        false_series_data.append(entry['false_count'])
+
+    true_series = {
+        'name': 'Resposta Sim',
+        'data': true_series_data,
+        'color': 'green'
+    }
+
+    false_series = {
+        'name': 'Resposta Não',
+        'data': false_series_data,
+        'color': 'red'
+    }
+
+    chart = {
+        'chart': {'type': 'column'},
+        'title': {'text': 'Pesquisa Alterdata Todos os Períodos'},
+        'xAxis': {'categories': categories},
+        'series': [true_series, false_series]
+    }
+
+    dump = json.dumps(chart)
+
     # Cria variável na session
     request.session['person_id'] = pk
 
-    #.distinct()
-
     context = {
         'clients': clients,
-        'searchs': searchs
+        'searchs': searchs,
+        'chart': dump
     }
 
-    print(context)
     return render(request, 'person_client_detail.html', context)
 
 
+def question_level_view(request):
+    dataset = SearchItem.objects.values('question__level').annotate(
+        true_count=Count('question__level', filter=Q(response=True)),
+        false_count=Count('question__level', filter=Q(response=False))).order_by('question__level')
+
+    categories = list()
+    true_series = list()
+    false_series = list()
+
+    for entry in dataset:
+        if entry['question__level'] == '0':
+            qlevel = 'Dependência'
+        elif entry['question__level'] == '1':
+            qlevel = 'Confiança'
+        elif entry['question__level'] == '2':
+            qlevel = 'Compromentimento'
+        else:
+            qlevel = 'Preditiva'
+
+        categories.append(qlevel)
+        true_series.append(entry['true_count'])
+        false_series.append(entry['false_count'])
+
+    return render(request, 'dash.html', {
+        'categories': json.dumps(categories),
+        'true_series': json.dumps(true_series),
+        'false_series': json.dumps(false_series)
+    })
+
+
+def question_level_view2(request):
+    dataset = SearchItem.objects.values('question__level').annotate(
+        true_count=Count('question__level', filter=Q(response=True)),
+        false_count=Count('question__level', filter=Q(response=False))).order_by('question__level')
+
+    categories = list()
+    true_series_data = list()
+    false_series_data = list()
+
+    for entry in dataset:
+        if entry['question__level'] == '0':
+            qlevel = 'Dependência'
+        elif entry['question__level'] == '1':
+            qlevel = 'Confiança'
+        elif entry['question__level'] == '2':
+            qlevel = 'Compromentimento'
+        else:
+            qlevel = 'Preditiva'
+
+        categories.append(qlevel)
+        true_series_data.append(entry['true_count'])
+        false_series_data.append(entry['false_count'])
+
+    true_series = {
+        'name': 'Resposta Sim',
+        'data': true_series_data,
+        'color': 'green'
+    }
+
+    false_series = {
+        'name': 'Resposta Não',
+        'data': false_series_data,
+        'color': 'red'
+    }
+
+    chart = {
+        'chart': {'type': 'column'},
+        'title': {'text': 'Pesquisa Alterdata Todos os Períodos'},
+        'xAxis': {'categories': categories},
+        'series': [true_series, false_series]
+    }
+
+    dump = json.dumps(chart)
+
+    return render(request, 'dash2.html', {'chart': dump})
 #
 # def addQuestions(**data):
 #     questions = Question.objects.all()
@@ -333,3 +459,5 @@ def pesquisa_update(request, pk):
     forms = [formset.empty_form] + formset.forms
     context = {'form': form, 'formset': formset, 'forms': forms}
     return render(request, 'receipt_form.html', context)
+
+

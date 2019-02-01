@@ -4,6 +4,7 @@
 {% block container %}
 
 <div class="card larger" id="card-radius">
+
     {% for client in clients %}
         <div class="row">
             <a class="col s12 waves-effect waves-light btn-small" href="{% url 'seach_create' %}"><i class="material-icons right">cloud</i>Nova pesquisa para: {{client.name}}</a>
@@ -42,5 +43,11 @@
             {% endfor %}
         </tbody>
     </table>
+
+        <div id="representacao"></div>
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    <script>
+      Highcharts.chart('representacao', {{ chart|safe }});
+    </script>
 </div>
 {% endblock %}

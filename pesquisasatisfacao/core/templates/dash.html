@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% load material_form %}
+{% block container %}
+
+<div class="card larger" id="card-radius">
+<div id="representacao"></div>
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    <script>
+      Highcharts.chart('representacao', {
+          chart: {
+              type: 'column'
+          },
+          title: {
+              text: 'Respostas geradas no total.'
+          },
+          xAxis: {
+              categories: {{ categories|safe }}
+          },
+          series: [{
+              name: 'Respostas Sim',
+              data: {{ true_series }},
+              color: 'green'
+          }, {
+              name: 'Respostas Não',
+              data: {{ false_series }},
+              color: 'red'
+          }]
+      });
+    </script>
+</div>
+{% endblock %}

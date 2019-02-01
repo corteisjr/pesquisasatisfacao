@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% load material_form %}
+{% block container %}
+
+<div class="card larger" id="card-radius">
+<div id="representacao"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+  Highcharts.chart('representacao', {{ chart|safe }});
+</script>
+</div>
+{% endblock %}

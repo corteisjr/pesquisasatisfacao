@@ -156,12 +156,6 @@ models.signals.post_save.connect(
 
 
 class SearchItem(models.Model):
-    RESPONSE_CHOICES = (
-        ('V', 'Verdadeiro'),
-        ('F', 'Falso'),
-        ('I', 'Indefinido'),
-    )
-
     search = models.ForeignKey(
         'core.search', related_name='Periodo', on_delete=models.CASCADE, verbose_name="Período da Pesquisa")
     question = models.ForeignKey(
@@ -176,3 +170,4 @@ class SearchItem(models.Model):
 
     def __str__(self):
         return self.question.question
+
