@@ -93,6 +93,7 @@ class SearchForm(forms.ModelForm):
 
 
 SearchItemFormSet = inlineformset_factory(Search, SearchItem,
+                                          widgets={'question__name': forms.TextInput(), },
                                           exclude=('id',),
                                           can_delete=True,
                                           fields=('question', 'response'), extra=1)
