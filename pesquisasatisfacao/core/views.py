@@ -124,6 +124,8 @@ def seach_create(request):
                 # form.save_m2m()
 
                 return HttpResponseRedirect('/pesquisa/listar')
+
+                #return redirect(Search.get_absolute_url())
             else:
                 print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
                 # person_instance = Person.objects.get(pk=request.session["person_id"])
@@ -431,7 +433,7 @@ def pesquisa_update(request, pk):
     # Pega a chave da URL acima com (request, pk)
     # joga na variável invoice na linha abaixo passando o modelo MESTRE e os parâmetros que desejo como filtro
     search = get_object_or_404(Search, pk=pk)
-    print(request.method)
+    # print(request.method)
     if request.method == 'POST':
         # Os formulários InvoiceForm receberá o request.POST com os campos em branco
         form = SearchForm(request.POST, instance=search)
@@ -444,7 +446,13 @@ def pesquisa_update(request, pk):
                 form.save()
                 formset.save()
 
-            return redirect('/cliente/listar/')
+            if 'btn_submit_1' in request.POST:
+                return redirect('/cliente/listar/')
+            else:
+                return redirect('/cliente/' + str(search.person.pk) + '/pesquisas')
+
+            # return redirect('/cliente/listar/')
+            # return redirect('/cliente/' + str(search.person.pk) + '/pesquisas')
     else:
         # Caso não seja POST ele trará o formulário com as informações preenchidas do parâmetro invoice
         # que pegamos da URL quando passamos o request de pk na entrada da função acima.
