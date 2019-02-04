@@ -15,12 +15,12 @@
             </div>
 
         <div class="card-content">
-            <table class="highlight" tastyle="width:100%">
+            <table class="highlight">
                 <thead class="#cfd8dc blue-grey lighten-4">
                 <tr>
                     <th>Pergunta</th>
 
-                    <th>Resposta</th>
+                    <th class="right-align">Resposta</th>
                     <th></th>
                 </tr>
 
@@ -35,14 +35,12 @@
 
                             <td >{{ item_form.question.errors }} {{ item_form.question }}</td>
 
-                            <td>
+                            <td class="right-align">
                                <div class="switch">
                                    <label>
-                                    Não
                                        {{ item_form.response.errors }}
                                        {{item_form.response}}
                                     <span class="lever"></span>
-                                    Sim
                                    </label>
                                </div>
                             </td>
@@ -61,7 +59,9 @@
         <br><br>
 
             <div class="card-action">
-                <strong class="right-align">Salvar e ir para:</strong>
+                <div class="right-align">
+                    <strong>Salvar e ir para:</strong>
+                </div>
                 <div class="right-align">
                     <button name="btn_submit_1" class="waves-effect waves-light btn" type="submit">Pesquisas de todos</button>
                     <button name="btn_submit_2" class="waves-effect waves-light btn" type="submit">Pesquisas Deste Cliente</button>

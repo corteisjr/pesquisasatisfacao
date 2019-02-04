@@ -7,7 +7,9 @@ body {
     //margin-top:6em
 }
 
-table.nospacing th, td { padding: 0; }
+table.nospacing th, td { padding: 0;
+                         width: 100%;
+}
 
 
 /*.chk_box input[type='checkbox'] {

@@ -123,9 +123,9 @@ def seach_create(request):
                 new.save()
                 # form.save_m2m()
 
-                return HttpResponseRedirect('/pesquisa/listar')
-
-                #return redirect(Search.get_absolute_url())
+                # return HttpResponseRedirect('/pesquisa/listar')
+                return HttpResponseRedirect(new.get_absolute_url())
+                # return redirect(Search.get_absolute_url())
             else:
                 print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
                 # person_instance = Person.objects.get(pk=request.session["person_id"])
@@ -418,7 +418,9 @@ def pesquisa_create(request):
                 formset.instance = receipt
                 formset.save()
 
-                return redirect('/cliente/listar/')
+                # return redirect('/cliente/listar/')
+                from hashlib import new
+                return redirect(new.get_absolut_address())
     else:
         form = SearchForm()
         # initial={'author': request.user}

@@ -7,19 +7,19 @@
         <table class="highlight">
             <thead class="#cfd8dc blue-grey lighten-4">
                 <tr>
-                    <th>Id.</th>
-                    <th>Cód. Alterdata</th>
+                    <th class="center-align">Id.</th>
+                    <th class="center-align">Cód. Alterdata</th>
                     <th>Nome</th>
                     <th>Telefone</th>
-                    <th>Última Pesquisa</th>
+                    <th class="center-align">Última Pesquisa</th>
                 </tr>
             </thead>
             {% for client in clients %}
                 <tr>
-                    <td>
+                    <td class="center-align">
                         {{ client.id|linebreaks }}
                     </td>
-                    <td>
+                    <td class="center-align">
                         <a href="{% url 'person_client_detail' pk=client.id %}">{{ client.cdalterdata|linebreaks }}</a>
                     </td>
                     <td>
@@ -27,7 +27,7 @@
                         <!--<a href="{% url 'person_client_detail' pk=client.pk %}">{{ client.name|linebreaks }}</a>-->
                     </td>
                     <td>{{ client.phone|linebreaks }}</td>
-                    <td>{{ client.last_search }}</td>
+                    <td class="center-align">{{ client.last_search }}</td>
                     <!--<td>{{ client.last_search|date:"d/m/Y" }}</td>-->
                 </tr>
             {% empty %}
