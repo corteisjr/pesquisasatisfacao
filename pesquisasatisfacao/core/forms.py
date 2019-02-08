@@ -1,26 +1,26 @@
 from django import forms
 from material import *
 
-from pesquisasatisfacao.core.models import Person, Client, Question, Search, SearchItem
+from pesquisasatisfacao.core.models import Client, Question, Search, SearchItem
 from django.forms import inlineformset_factory
 
-
-class PersonForm(forms.ModelForm):
-
-    class Meta:
-        model = Person
-        fields = (
-            'cdalterdata',
-            'name',
-            'phone',
-        )
-
-    layout = Layout(
-        Fieldset("Inclua uma Pessoa",
-                 Row(Span4('cdalterdata'),Span8('name'), ),
-                 Row('phone')
-                 )
-    )
+#
+# class PersonForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Person
+#         fields = (
+#             'cdalterdata',
+#             'name',
+#             'phone',
+#         )
+#
+#     layout = Layout(
+#         Fieldset("Inclua uma Pessoa",
+#                  Row(Span4('cdalterdata'),Span8('name'), ),
+#                  Row('phone')
+#                  )
+#     )
 
 
 class ClientForm(forms.ModelForm):
@@ -31,15 +31,31 @@ class ClientForm(forms.ModelForm):
             'cdalterdata',
             'name',
             'phone',
+            'cpf_cnpj',
+            'email',
+            'sistem',
+            'zip_code',
+            'public_place',
+            'number',
+            'neighborhood',
+            'city',
+            'state',
+            'representative',
             'last_search',
         )
 
     layout = Layout(
         Fieldset("Inclua um Cliente",
-                 Row(Span4('cdalterdata'), Span8('name'), ),
-                 Row(Span4('phone'), Span8('last_search'))
-                 )
-    )
+                 Row(Span4('cdalterdata'), Span8('representative'), ),
+                 Row(Span12('name'), ),
+                 Row(Span4('phone'), Span8('cpf_cnpj')),
+                 Row(Span9('email'), Span3('last_search'), ),
+                 Row(Span12('sistem'), ),
+                 ),
+        Fieldset('Endereço',
+                 Row(Span2('zip_code'), Span8('public_place'), Span2('number')),
+                 Row(Span5('neighborhood'), Span5('city'), Span2('state')))
+        )
 
 
 class QuestionForm(forms.ModelForm):
@@ -93,7 +109,7 @@ class SearchForm(forms.ModelForm):
 
 
 SearchItemFormSet = inlineformset_factory(Search, SearchItem,
-                                          widgets={'question__name': forms.TextInput(), },
+                                          widgets={'question__name': forms.TextInput(attrs={'width': '110%'}), },
                                           exclude=('id',),
                                           can_delete=True,
                                           fields=('question', 'response'), extra=1)

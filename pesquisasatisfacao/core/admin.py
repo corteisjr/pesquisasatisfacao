@@ -1,19 +1,19 @@
 from django.contrib import admin
 
 # Register your models here.
-from pesquisasatisfacao.core.models import Person, Client, Search, Question, SearchItem
+from pesquisasatisfacao.core.models import  Client, Search, Question, SearchItem
 
 
-@admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'id', 'phone', 'cdalterdata')
-    search_fields = ('cdalterdata', 'name', 'email')
+# @admin.register(Person)
+# class PersonAdmin(admin.ModelAdmin):
+#     list_display = ('__str__', 'id', 'phone', 'cdalterdata')
+#     search_fields = ('cdalterdata', 'name', 'email')
 
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'id', 'phone', 'cdalterdata')
-    search_fields = ('cdalterdata', 'name', 'email', 'last_search')
+    search_fields = ('cdalterdata', 'name', 'city', 'last_search')
 
 
 @admin.register(Search)

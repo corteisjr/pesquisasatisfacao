@@ -4,17 +4,26 @@
 {% block container %}
 
     <div class="card larger" id="card-radius">
-        <table class="responsive-table highlight" tastyle="width:100%">
+        <table class="highlight">
             <thead class="#cfd8dc blue-grey lighten-4">
                 <tr>
-                    <th>Id.</th>
+                    <th class="center-align">Id.</th>
                     <th>Pergunta</th>
                     <th>Nível</th>
                 </tr>
             </thead>
             {% for question in questions %}
-                <tr>
-                    <td>
+                <tr class=" {% if question.get_level_display == 'Dependencia'%}
+                                #c5e1a5 light-green lighten-3
+                            {% elif question.get_level_display == 'Confianca' %}
+                                #bbdefb blue lighten-4
+                            {% elif question.get_level_display == 'Comprometimento' %}
+                                #ff8a65 deep-orange lighten-2
+                            {% elif question.get_level_display == 'Preditiva' %}
+                                #e0e0e0 grey lighten-2
+                            {% endif %}">
+
+                    <td class="center-align">
                         <a href="{{ question.get_absolute_url }}">{{ question.id|linebreaks }}</a>
                     </td>
                     <td>{{ question.question|linebreaks }}</td>

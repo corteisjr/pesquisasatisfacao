@@ -8,8 +8,8 @@ from django.shortcuts import render, redirect, render_to_response, get_object_or
 from django.template import RequestContext
 from django.views.generic import TemplateView
 
-from pesquisasatisfacao.core.forms import QuestionForm, ClientForm, PersonForm, SearchForm, SearchItemFormSet
-from pesquisasatisfacao.core.models import Search, Question, Client, Person, SearchItem
+from pesquisasatisfacao.core.forms import QuestionForm, ClientForm, SearchForm, SearchItemFormSet
+from pesquisasatisfacao.core.models import Search, Question, Client, SearchItem
 
 
 def home(request):
@@ -18,38 +18,38 @@ def home(request):
 #-----------------------------------------------------------------------------------------------------------------------
 
 
-def person_create(request):
-    if request.method == 'POST':
-        form = PersonForm(request.POST)
+# def person_create(request):
+#     if request.method == 'POST':
+#         form = PersonForm(request.POST)
+#
+#         if form.is_valid():
+#             print('<<<<==== FORM VALIDO ====>>>>')
+#             new = form.save(commit=False)
+#             new.save()
+#             #form.save_m2m()
+#
+#             return HttpResponseRedirect('/pessoa/listar')
+#         else:
+#             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+#             print(form)
+#             return render(request, 'person_create.html', {'form':form})
+#     else:
+#         context = {'form': PersonForm()}
+#         return render(request, 'person_create.html', context)
 
-        if form.is_valid():
-            print('<<<<==== FORM VALIDO ====>>>>')
-            new = form.save(commit=False)
-            new.save()
-            #form.save_m2m()
 
-            return HttpResponseRedirect('/pessoa/listar')
-        else:
-            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            print(form)
-            return render(request, 'person_create.html', {'form':form})
-    else:
-        context = {'form': PersonForm()}
-        return render(request, 'person_create.html', context)
-
-
-def person_list2(request):
-    persons = Person.objects.all().order_by("cdalterdata")
-    return render(request, 'person_list.html', {'persons': persons})
+# def person_list2(request):
+#     persons = Person.objects.all().order_by("cdalterdata")
+#     return render(request, 'person_list.html', {'persons': persons})
 
 
 def person_list(request):
     q = request.GET.get('searchInput')
     print(request.GET)
     if q:
-        pessoas = Person.objects.filter(name__icontains=q)
+        pessoas = Client.objects.filter(name__icontains=q)
     else:
-        pessoas = Person.objects.all()
+        pessoas = Client.objects.all()
     context = {'pessoas': pessoas}
     print(context)
     return render(request, 'person_list.html', context)
@@ -77,8 +77,23 @@ def person_client_create(request):
         return render(request, 'person_create.html', context)
 
 
+def person_populate(request):
+    # Não podemos trabalhar com multiclasses com bulk create, temos que unificar as tabelas Person e Client.
+    from pesquisasatisfacao.core import create_data
+
+    lista = []
+
+    for client in create_data.client_add:
+        obj = Client(**client)
+        lista.append(obj)
+    print(lista[1])
+    Client.objects.bulk_create(lista)
+
+    return HttpResponseRedirect('/cliente/listar')
+
+
 def person_client_list(request):
-    clients = Client.objects.select_related('person_ptr').all().order_by("cdalterdata")
+    clients = Client.objects.select_related().all().order_by("cdalterdata")
     return render(request, 'person_client_list.html', {'clients': clients})
 
 
@@ -99,17 +114,33 @@ def question_create(request):
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
             print(form)
-            return render(request, 'question_create.html', {'form':form})
+            return render(request, 'question_create.html', {'form': form})
     else:
         context = {'form': QuestionForm()}
         return render(request, 'question_create.html', context)
 
 
+def question_populate(request):
+
+    from pesquisasatisfacao.core import create_data
+    print(create_data.question_add)
+
+    lista = []
+
+    for question in create_data.question_add:
+        obj = Question(**question)
+        lista.append(obj)
+
+    Question.objects.bulk_create(lista)
+
+    return HttpResponseRedirect('/perguntas/listar')
+
+
 def question_list(request):
-    questions = Question.objects.all().order_by("question")
+    questions = Question.objects.all().order_by("level", "id", "question")
     return render(request, 'question_list.html', {'questions': questions})
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 
 
 def seach_create(request):
@@ -158,9 +189,8 @@ def search_list(request):
 
 def person_client_detail(request, pk):
     # client = get_object_or_404(Client, person_id=pk)
-    clients = Client.objects.select_related('person_ptr').filter(person_ptr=pk)
-    searchs = Search.objects.select_related('person', 'search').filter(person_id=pk).values('id', 'search_key',
-                                                                                            'researched', 'person')
+    clients = Client.objects.select_related().filter(id=pk)
+    searchs = Search.objects.select_related().filter(person_id=pk).values('id', 'search_key', 'researched', 'person')
 
     dataset = SearchItem.objects.select_related().filter(search__person_id=pk).values('question__level').annotate(
         true_count=Count('question__level', filter=Q(response=True)), false_count=Count('question__level',

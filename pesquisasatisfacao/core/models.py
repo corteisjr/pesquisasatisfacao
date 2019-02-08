@@ -2,34 +2,47 @@ from django.db import models
 from django.urls import reverse
 
 
-class Person(models.Model):
-    cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
-    name = models.CharField('Nome', max_length=100)
-    phone = models.CharField('Telefone', max_length=11, null=True, blank=True)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = 'Pessoa'
-        verbose_name_plural = 'Pessoas'
-
-    def __str__(self):
-        return self.name
-
-    def to_dict_json(self):
-        return {
-            'cdalterdata': self.cdalterdata,
-            'name': self.name,
-            'email': self.email,
-            'phone': self.phone,
-            # 'gender': self.get_gender_display(),
-        }
+# class Person(models.Model):
+#     cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
+#     name = models.CharField('Nome', max_length=100)
+#     phone = models.CharField('Telefone', max_length=11, null=True, blank=True)
+#
+#     class Meta:
+#         ordering = ('name',)
+#         verbose_name = 'Pessoa'
+#         verbose_name_plural = 'Pessoas'
+#
+#     def __str__(self):
+#         return self.name
+#
+#     def to_dict_json(self):
+#         return {
+#             'cdalterdata': self.cdalterdata,
+#             'name': self.name,
+#             'email': self.email,
+#             'phone': self.phone,
+#             # 'gender': self.get_gender_display(),
+#         }
 
     # def get_absolute_url(self):
     #     return reverse('pesquisa_alter:add_pesquisa', args=[str(self.id)])
 
 
-
-class Client(Person):
+class Client(models.Model):
+    cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
+    name = models.CharField('Nome', max_length=100)
+    phone = models.CharField('Telefone', max_length=20, null=True, blank=True)
+    cpf_cnpj = models.CharField('CPF/CNPJ', max_length=18, null=True, blank=True)
+    email = models.CharField('E-Mail', max_length=30, null=True, blank=False)
+    sistem = models.CharField('Sistema', max_length=10, null=True, blank=False)
+    zip_code = models.CharField('Cep', max_length=10, null=True, blank=False)
+    public_place = models.CharField('Logradouro', max_length=100)
+    number = models.CharField('Número', max_length=10, null=False, blank=False)
+    neighborhood = models.CharField('Bairro', max_length=50, null=False, blank=False)
+    city = models.CharField('Cidade', max_length=50, null=False, blank=False)
+    state = models.CharField('estado', max_length=10, null=False, blank=False)
+    representative = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE,
+                                       verbose_name="Representante")
     last_search = models.CharField('Última pesquisa.', max_length=11, null=True, blank=True)
     created_on = models.DateField(
         'Criado em.',
@@ -41,6 +54,9 @@ class Client(Person):
         ordering = ('created_on',)
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
+
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse('person_client_detail', args=[str(self.pk)])

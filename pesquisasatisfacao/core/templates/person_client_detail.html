@@ -16,7 +16,7 @@
     <table>
         <thead class="#cfd8dc blue-grey lighten-4">
             <tr>
-                <th>ID</th>
+                <th class="center-align">ID</th>
                 <th>Período</th>
                 <th>Entrevistado</th>
             </tr>
@@ -25,7 +25,7 @@
         <tbody>
             {% for search in searchs %}
                 <tr>
-                    <td>
+                    <td class="center-align">
                         <a href="{% url 'pesquisa_update' pk=search.id %}">{{ search.id|linebreaks }}</a>
                     </td>
 
