@@ -31,7 +31,7 @@ from django.urls import reverse
 class Client(models.Model):
     cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
     name = models.CharField('Nome', max_length=100)
-    phone = models.CharField('Telefone', max_length=30, null=True, blank=True)
+    phone = models.CharField('Telefone', max_length=50, null=True, blank=True)
     cpf_cnpj = models.CharField('CPF/CNPJ', max_length=18, null=True, blank=True)
     email = models.CharField('E-Mail', max_length=50, null=True, blank=False)
     sistem = models.CharField('Sistema', max_length=10, null=True, blank=False)
