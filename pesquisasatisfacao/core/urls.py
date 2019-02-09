@@ -11,6 +11,7 @@ urlpatterns = [
     path('pessoa/listar/', views.person_list, name='person_list'),
 
     path('cliente/novo/', views.person_client_create, name='person_client_create'),
+    path('cliente/<int:pk>/editar/', views.person_client_update, name='person_client_update'),
     path('cliente/popular/', views.person_populate, name='person_populate'),
     path('cliente/listar/', views.person_client_list, name='person_client_list'),
     path('cliente/<int:pk>/pesquisas/', views.person_client_detail, name='person_client_detail'),

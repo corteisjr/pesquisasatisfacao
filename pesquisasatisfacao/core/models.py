@@ -40,7 +40,8 @@ class Client(models.Model):
     number = models.CharField('Número', max_length=10, null=False, blank=False)
     neighborhood = models.CharField('Bairro', max_length=50, null=False, blank=False)
     city = models.CharField('Cidade', max_length=50, null=False, blank=False)
-    state = models.CharField('estado', max_length=10, null=False, blank=False)
+    state = models.CharField('Estado', max_length=10, null=False, blank=False)
+    is_representative = models.BooleanField('É representante?')
     representative = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE,
                                        verbose_name="Representante")
     last_search = models.CharField('Última pesquisa.', max_length=11, null=True, blank=True)

@@ -24,6 +24,8 @@ from django.forms import inlineformset_factory
 
 
 class ClientForm(forms.ModelForm):
+    representative = forms.ModelChoiceField(queryset=Client.objects.filter(is_representative=True), required=False,
+                                            label="Representante (Matriz ou Filial)", )
 
     class Meta:
         model = Client
@@ -40,14 +42,15 @@ class ClientForm(forms.ModelForm):
             'neighborhood',
             'city',
             'state',
+            'is_representative',
             'representative',
             'last_search',
         )
 
     layout = Layout(
-        Fieldset("Inclua um Cliente",
-                 Row(Span4('cdalterdata'), Span8('representative'), ),
-                 Row(Span12('name'), ),
+        Fieldset("Cadastro de Pessoa",
+                 Row(Span3('cdalterdata'), Span9('name'), ),
+                 Row(Span3('is_representative'), Span9('representative'), ),
                  Row(Span4('phone'), Span8('cpf_cnpj')),
                  Row(Span9('email'), Span3('last_search'), ),
                  Row(Span12('sistem'), ),

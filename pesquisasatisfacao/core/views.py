@@ -54,7 +54,7 @@ def person_list(request):
     print(context)
     return render(request, 'person_list.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 
 
 def person_client_create(request):
@@ -65,7 +65,7 @@ def person_client_create(request):
             print('<<<<==== FORM VALIDO ====>>>>')
             new = form.save(commit=False)
             new.save()
-            #form.save_m2m()
+            # form.save_m2m()
 
             return HttpResponseRedirect('/cliente/listar')
         else:
@@ -75,6 +75,34 @@ def person_client_create(request):
     else:
         context = {'form': ClientForm()}
         return render(request, 'person_create.html', context)
+
+
+def person_client_update(request, pk):
+    # Pega a chave da URL acima com (request, pk)
+    # joga na variável invoice na linha abaixo passando o modelo MESTRE e os parâmetros que desejo como filtro
+    client = get_object_or_404(Client, pk=pk)
+
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=client)
+        print(client.pk, ' <----- AND-----> ', client.cdalterdata)
+
+        if form.is_valid():
+
+            print('<<<<==== FORM VALIDO ====>>>>')
+            new = form.save(commit=False)
+            new.save()
+            # form.save_m2m()
+
+            # return HttpResponseRedirect('/cliente/listar')
+            return redirect('/cliente/' + str(client.pk) + '/pesquisas')
+        else:
+            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+            print(form)
+            return render(request, 'person_create.html', {'form': form})
+    else:
+        form = ClientForm(instance=client)
+    context = {'form': form}
+    return render(request, 'person_create.html', context)
 
 
 def person_populate(request):
@@ -93,11 +121,11 @@ def person_populate(request):
 
 
 def person_client_list(request):
-    clients = Client.objects.select_related().all().order_by("cdalterdata")
+    clients = Client.objects.select_related().all().order_by("name")
     return render(request, 'person_client_list.html', {'clients': clients})
 
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 
 
 def question_create(request):
@@ -184,7 +212,7 @@ def search_list(request):
     seachs = Search.objects.all()
     return render(request, 'search_list.html', {'seachs': seachs})
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 
 
 def person_client_detail(request, pk):
@@ -348,23 +376,24 @@ def question_level_view2(request):
 #
 #     return HttpResponseRedirect('/')
 
+
 class SearchDetailWiew(TemplateView):
     template_name = 'search.html'
 
     def get_formset(self, clear=False):
-        QuestionsFormSet = modelformset_factory(
+        questionsformset = modelformset_factory(
             Search, fields=('response',), can_delete=False, extra=0
         )
         # Soluçao alternativa
         client = Client.objects.last()
         if clear:
 
-            formset = QuestionsFormSet(
-                queryset = Search.objects.filter(search_key='11/2018', person=client)
+            formset = questionsformset(
+                queryset=Search.objects.filter(search_key='11/2018', person=client)
             )
         else:
-            formset = QuestionsFormSet(
-                queryset = Search.objects.filter(search_key='11/2018', person=client),
+            formset = questionsformset(
+                queryset=Search.objects.filter(search_key='11/2018', person=client),
                 data=self.request.POST or None
             )
 
@@ -389,50 +418,6 @@ class SearchDetailWiew(TemplateView):
 
 
 search_list2 = SearchDetailWiew.as_view()
-
-
-def pesquisa_editar3(request):
-
-    searchformfet = modelformset_factory(Search, fields='__all__', extra=0)
-    if request.method == "POST":
-        formset = searchformfet(request.POST)
-
-        if formset.is_valid():
-            message = "Thank you"
-            for form in formset:
-                print(form)
-                form.save()
-        else:
-            message = "Something went wrong"
-
-        return render_to_response('search2.html',
-                {'message': message}, RequestContext(request))
-    else:
-        return render_to_response('search2.html',
-                {'formset': searchformfet()}, RequestContext(request))
-
-
-# def pesquisa_editar(request):
-#     questionsformset = modelformset_factory(Search, fields=('person', ), extra=0)
-#     novapesquisa=Search.objects.all()
-#
-#     if request.method == 'POST':
-#         #form = QuestionsFormSet(queryset=Search.objects.all())
-#         #formset = questionsformset(request.POST)
-#         formset = questionsformset(request.POST)
-#
-#         #instances = form.save(commit=False)
-#
-#         #for instance in instances:
-#         #   instance.save()
-#
-#         instances = formset.save()
-#
-#     form = questionsformset()
-#     print(form)
-#
-#     context = {'form': form}
-#     return render(request, 'search_funcionando.html', context)
 
 
 def pesquisa_create(request):
@@ -478,13 +463,12 @@ def pesquisa_update(request, pk):
                 form.save()
                 formset.save()
 
+            # return redirect('/cliente/' + str(search.person.pk) + '/pesquisas')
+
             if 'btn_submit_1' in request.POST:
                 return redirect('/cliente/listar/')
             else:
                 return redirect('/cliente/' + str(search.person.pk) + '/pesquisas')
-
-            # return redirect('/cliente/listar/')
-            # return redirect('/cliente/' + str(search.person.pk) + '/pesquisas')
     else:
         # Caso não seja POST ele trará o formulário com as informações preenchidas do parâmetro invoice
         # que pegamos da URL quando passamos o request de pk na entrada da função acima.

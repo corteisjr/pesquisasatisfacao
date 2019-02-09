@@ -17,7 +17,7 @@
             {% for client in clients %}
                 <tr>
                     <td class="center-align">
-                        {{ client.id|linebreaks }}
+                        <a href="{% url 'person_client_update' pk=client.id %}">{{ client.id|linebreaks }}</a>
                     </td>
                     <td class="center-align">
                         <a href="{% url 'person_client_detail' pk=client.id %}">{{ client.cdalterdata|linebreaks }}</a>
