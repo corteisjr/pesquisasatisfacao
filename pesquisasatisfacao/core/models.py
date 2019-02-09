@@ -33,7 +33,7 @@ class Client(models.Model):
     name = models.CharField('Nome', max_length=100)
     phone = models.CharField('Telefone', max_length=20, null=True, blank=True)
     cpf_cnpj = models.CharField('CPF/CNPJ', max_length=18, null=True, blank=True)
-    email = models.CharField('E-Mail', max_length=30, null=True, blank=False)
+    email = models.CharField('E-Mail', max_length=50, null=True, blank=False)
     sistem = models.CharField('Sistema', max_length=10, null=True, blank=False)
     zip_code = models.CharField('Cep', max_length=10, null=True, blank=False)
     public_place = models.CharField('Logradouro', max_length=100)
