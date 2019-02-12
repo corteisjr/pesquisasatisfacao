@@ -8,7 +8,7 @@ urlpatterns = [
     path('', include(frontend_urls)),
 
     # path('pessoa/novo/', views.person_create, name='person_create'),
-    path('pessoa/listar/', views.person_list, name='person_list'),
+    #path('pessoa/listar/', views.person_list, name='person_list'),
 
     path('cliente/novo/', views.person_client_create, name='person_client_create'),
     path('cliente/<int:pk>/editar/', views.person_client_update, name='person_client_update'),

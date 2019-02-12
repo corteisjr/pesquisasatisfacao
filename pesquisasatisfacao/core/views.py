@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, render_to_response, get_object_or_404
-from django.template import RequestContext
+
 from django.views.generic import TemplateView
 
 from pesquisasatisfacao.core.forms import QuestionForm, ClientForm, SearchForm, SearchItemFormSet
@@ -43,17 +43,6 @@ def home(request):
 #     return render(request, 'person_list.html', {'persons': persons})
 
 
-def person_list(request):
-    q = request.GET.get('searchInput')
-    print(request.GET)
-    if q:
-        pessoas = Client.objects.filter(name__icontains=q)
-    else:
-        pessoas = Client.objects.all()
-    context = {'pessoas': pessoas}
-    print(context)
-    return render(request, 'person_list.html', context)
-
 # -----------------------------------------------------------------------------------------------------------------------
 
 
@@ -84,20 +73,18 @@ def person_client_update(request, pk):
 
     if request.method == 'POST':
         form = ClientForm(request.POST, instance=client)
-        print(client.pk, ' <----- AND-----> ', client.cdalterdata)
 
         if form.is_valid():
 
             print('<<<<==== FORM VALIDO ====>>>>')
             new = form.save(commit=False)
             new.save()
-            # form.save_m2m()
+            form.save_m2m()
 
             # return HttpResponseRedirect('/cliente/listar')
             return redirect('/cliente/' + str(client.pk) + '/pesquisas')
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            print(form)
             return render(request, 'person_create.html', {'form': form})
     else:
         form = ClientForm(instance=client)
@@ -121,8 +108,18 @@ def person_populate(request):
 
 
 def person_client_list(request):
-    clients = Client.objects.select_related().all().order_by("name")
-    return render(request, 'person_client_list.html', {'clients': clients})
+    q = request.GET.get('searchInput')
+    print(request.GET)
+    if q:
+        clients = Client.objects.filter(Q(is_representative=False),
+                                        Q(name__icontains=q) |
+                                        Q(cdalterdata__icontains=q) |
+                                        Q(last_search__icontains=q)
+                                        )
+    else:
+        clients = Client.objects.all()
+    context = {'clients': clients}
+    return render(request, 'person_client_list.html', context)
 
 
 # -----------------------------------------------------------------------------------------------------------------------

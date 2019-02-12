@@ -27,23 +27,45 @@ from django.urls import reverse
     # def get_absolute_url(self):
     #     return reverse('pesquisa_alter:add_pesquisa', args=[str(self.id)])
 
+class Product(models.Model):
+    name = models.CharField('Nome', max_length=100)
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Produto'
+        verbose_name_plural = 'Produtos'
+
+    def __str__(self):
+        return self.name
+
+    # def get_absolute_url(self):
+    #     return reverse('person_client_detail', args=[str(self.pk)])
+
 
 class Client(models.Model):
+    SYSTEM_CHOICES = (
+        ('0', 'Pack'),
+        ('1', 'Shop'),
+        ('2', 'IShop'),
+        ('3', 'Immobile'),
+        ('4', 'Bimer'),
+    )
     cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
     name = models.CharField('Nome', max_length=100)
     phone = models.CharField('Telefone', max_length=50, null=True, blank=True)
     cpf_cnpj = models.CharField('CPF/CNPJ', max_length=18, null=True, blank=True)
     email = models.CharField('E-Mail', max_length=50, null=True, blank=False)
-    sistem = models.CharField('Sistema', max_length=10, null=True, blank=False)
-    zip_code = models.CharField('Cep', max_length=10, null=True, blank=False)
-    public_place = models.CharField('Logradouro', max_length=100)
-    number = models.CharField('Número', max_length=10, null=False, blank=False)
-    neighborhood = models.CharField('Bairro', max_length=50, null=False, blank=False)
-    city = models.CharField('Cidade', max_length=50, null=False, blank=False)
-    state = models.CharField('Estado', max_length=10, null=False, blank=False)
+    # system = models.CharField('Sistema', max_length=10, null=True, blank=False)
+    cep = models.CharField('Cep', max_length=10, null=True, blank=False)
+    logradouro = models.CharField('Logradouro', max_length=100)
+    numero = models.CharField('Número', max_length=10, null=False, blank=False)
+    bairro = models.CharField('Bairro', max_length=50, null=False, blank=False)
+    cidade = models.CharField('Cidade', max_length=50, null=False, blank=False)
+    estado = models.CharField('Estado', max_length=10, null=False, blank=False)
     is_representative = models.BooleanField('É representante?')
     representative = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE,
                                        verbose_name="Representante")
+    products = models.ManyToManyField('core.product', related_name="products")
     last_search = models.CharField('Última pesquisa.', max_length=11, null=True, blank=True)
     created_on = models.DateField(
         'Criado em.',

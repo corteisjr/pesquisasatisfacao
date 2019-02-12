@@ -4,13 +4,23 @@
 {% block container %}
 
     <div class="card larger" id="card-radius">
+        <br>
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="searchInput" name="searchInput" type="text" class="validate">
+                        <label for="searchInput">Digite sua pesquisa aqui e tecle ENTER.</label>
+                    </div>
+                </div>
+            </form>
+        </div>
         <table class="highlight">
             <thead class="#cfd8dc blue-grey lighten-4">
                 <tr>
                     <th class="center-align">Id.</th>
                     <th class="center-align">Cód. Alterdata</th>
                     <th>Nome</th>
-                    <th>Telefone</th>
                     <th class="center-align">Última Pesquisa</th>
                 </tr>
             </thead>
@@ -26,7 +36,7 @@
                         {{ client.name|linebreaks }}
                         <!--<a href="{% url 'person_client_detail' pk=client.pk %}">{{ client.name|linebreaks }}</a>-->
                     </td>
-                    <td>{{ client.phone|linebreaks }}</td>
+
                     <td class="center-align">{{ client.last_search }}</td>
                     <!--<td>{{ client.last_search|date:"d/m/Y" }}</td>-->
                 </tr>

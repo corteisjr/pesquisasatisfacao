@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from material import *
 
-from pesquisasatisfacao.core.models import Client, Question, Search, SearchItem
+from pesquisasatisfacao.core.models import Client, Question, Search, SearchItem, Product
 from django.forms import inlineformset_factory
 
 #
@@ -24,8 +25,24 @@ from django.forms import inlineformset_factory
 
 
 class ClientForm(forms.ModelForm):
+    SYSTEM_CHOICES = (
+        ('0', 'Pack'),
+        ('1', 'Shop'),
+        ('2', 'IShop'),
+        ('3', 'Immobile'),
+        ('4', 'Bimer'),
+    )
+
     representative = forms.ModelChoiceField(queryset=Client.objects.filter(is_representative=True), required=False,
                                             label="Representante (Matriz ou Filial)", )
+    # system = forms.MultipleChoiceField(label="Sistema(s)", widget=forms.CheckboxSelectMultiple(), choices=SYSTEM_CHOICES)
+    system = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                       required=False,
+                                       choices=SYSTEM_CHOICES)
+    # products = forms.ModelMultipleChoiceField(label='Produtos', queryset=Product.objects.all(),
+    #                                               widget=FilteredSelectMultiple("Produtos", is_stacked=False,
+    #                                                                             attrs={'class': 'material-ignore',
+    #                                                                                    'multiple': 'True'}))
 
     class Meta:
         model = Client
@@ -35,16 +52,16 @@ class ClientForm(forms.ModelForm):
             'phone',
             'cpf_cnpj',
             'email',
-            'sistem',
-            'zip_code',
-            'public_place',
-            'number',
-            'neighborhood',
-            'city',
-            'state',
+            'cep',
+            'logradouro',
+            'numero',
+            'bairro',
+            'cidade',
+            'estado',
             'is_representative',
             'representative',
             'last_search',
+            'products',
         )
 
     layout = Layout(
@@ -53,11 +70,11 @@ class ClientForm(forms.ModelForm):
                  Row(Span3('is_representative'), Span9('representative'), ),
                  Row(Span4('phone'), Span8('cpf_cnpj')),
                  Row(Span9('email'), Span3('last_search'), ),
-                 Row(Span12('sistem'), ),
+                 Row(Span12('products'), ),
                  ),
         Fieldset('Endereço',
-                 Row(Span2('zip_code'), Span8('public_place'), Span2('number')),
-                 Row(Span5('neighborhood'), Span5('city'), Span2('state')))
+                 Row(Span2('cep'), Span8('logradouro'), Span2('numero')),
+                 Row(Span5('bairro'), Span5('cidade'), Span2('estado')))
         )
 
 
