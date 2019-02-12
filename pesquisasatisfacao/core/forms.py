@@ -35,10 +35,12 @@ class ClientForm(forms.ModelForm):
 
     representative = forms.ModelChoiceField(queryset=Client.objects.filter(is_representative=True), required=False,
                                             label="Representante (Matriz ou Filial)", )
+
     # system = forms.MultipleChoiceField(label="Sistema(s)", widget=forms.CheckboxSelectMultiple(), choices=SYSTEM_CHOICES)
-    system = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
-                                       required=False,
-                                       choices=SYSTEM_CHOICES)
+    # system = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+    #                                    required=False,
+    #                                    choices=SYSTEM_CHOICES)
+
     # products = forms.ModelMultipleChoiceField(label='Produtos', queryset=Product.objects.all(),
     #                                               widget=FilteredSelectMultiple("Produtos", is_stacked=False,
     #                                                                             attrs={'class': 'material-ignore',

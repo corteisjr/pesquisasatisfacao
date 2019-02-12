@@ -43,13 +43,13 @@ class Product(models.Model):
 
 
 class Client(models.Model):
-    SYSTEM_CHOICES = (
-        ('0', 'Pack'),
-        ('1', 'Shop'),
-        ('2', 'IShop'),
-        ('3', 'Immobile'),
-        ('4', 'Bimer'),
-    )
+    # SYSTEM_CHOICES = (
+    #     ('0', 'Pack'),
+    #     ('1', 'Shop'),
+    #     ('2', 'IShop'),
+    #     ('3', 'Immobile'),
+    #     ('4', 'Bimer'),
+    # )
     cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
     name = models.CharField('Nome', max_length=100)
     phone = models.CharField('Telefone', max_length=50, null=True, blank=True)
@@ -65,7 +65,7 @@ class Client(models.Model):
     is_representative = models.BooleanField('É representante?')
     representative = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE,
                                        verbose_name="Representante")
-    products = models.ManyToManyField('core.product', related_name="products")
+    products = models.ManyToManyField('core.product', related_name="products", verbose_name="Produtos")
     last_search = models.CharField('Última pesquisa.', max_length=11, null=True, blank=True)
     created_on = models.DateField(
         'Criado em.',

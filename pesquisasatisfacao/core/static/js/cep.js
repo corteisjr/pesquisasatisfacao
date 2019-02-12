@@ -6,6 +6,7 @@ $(document).ready(function() {
         $("#id_bairro").val("");
         $("#id_cidade").val("");
         $("#id_estado").val("");
+        //$("#id_numero").val("");
     }
     
     //Quando o campo cep perde o foco.
@@ -28,6 +29,7 @@ $(document).ready(function() {
                 $("#id_bairro").val("...")
                 $("#id_cidade").val("...")
                 $("#id_estado").val("...")
+                //$("#id_numero").val("...")
 
                 //Consulta o webservice viacep.com.br/
                 $.getJSON("//viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
@@ -38,6 +40,7 @@ $(document).ready(function() {
                         $("#id_bairro").val(dados.bairro);
                         $("#id_cidade").val(dados.localidade);
                         $("#id_estado").val(dados.uf);
+                        //$("#id_numero").val(dados.logradouro.split(" ", 1));
 
                         // Adiciona a classe 'active' aos campos já preenchidos, isto faz com que o
                         // 'label' do campo fique 'alto'

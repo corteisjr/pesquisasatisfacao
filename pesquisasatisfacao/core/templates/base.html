@@ -25,7 +25,7 @@
 
 <body>
     <!--NAVBAR-->
-    <nav class="blue darken-2">
+    <nav class="#1a237e indigo darken-4 col s12 m6">
         <div class="nav-wrapper">
         <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large"><i class="material-icons">menu</i></a>
         <a href="{% url 'question_level_view2' %}" class="brand-logo">Alterdata Filiais</a>
@@ -87,39 +87,39 @@
         {% include 'material/includes/material_js.html' %}
 
 
-        <!--<script>-->
-            <!--$(document).ready(function(){-->
-                <!--//MATERIALIZE-->
-                <!--$('.sidenav').sidenav();-->
-                <!--$('.dropdown-trigger').dropdown();-->
-                <!--$('.datepicker').datepicker(-->
-                    <!--{-->
-                        <!--showClearBtn:false,-->
-                        <!--autoClose:true,-->
-                        <!--setDefaultDate:true,-->
-                        <!--//POSSO SETAR 01/mm/yyyy OU REMOVER ESSE CAMPO DO MODELO E PREENCHER COM SIGNALS-->
-                        <!--format: 'dd/mm/yyyy',-->
-                            <!--i18n: {-->
-                                <!--months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],-->
-                                <!--monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],-->
-                                <!--weekdays: ["Domingo","Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],-->
-                                <!--weekdaysShort: ["Dom","Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],-->
-                                <!--weekdaysAbbrev: ["D","S", "T", "Q", "Q", "S", "S"]-->
-                            <!--}-->
-                        <!--}-->
-                    <!--);-->
+        <script>
+            $(document).ready(function(){
+                //MATERIALIZE
+                $('.sidenav').sidenav();
+                $('.dropdown-trigger').dropdown();
+                $('.datepicker').datepicker(
+                    {
+                        showClearBtn:false,
+                        autoClose:true,
+                        setDefaultDate:true,
+                        //POSSO SETAR 01/mm/yyyy OU REMOVER ESSE CAMPO DO MODELO E PREENCHER COM SIGNALS
+                        format: 'dd/mm/yyyy',
+                            i18n: {
+                                months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+                                monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                                weekdays: ["Domingo","Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+                                weekdaysShort: ["Dom","Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+                                weekdaysAbbrev: ["D","S", "T", "Q", "Q", "S", "S"]
+                            }
+                        }
+                    );
 
-                <!--// JQUERY MTZ.MONTHPICKER-->
-                <!--//https://www.jqueryscript.net/time-clock/jQuery-Plugin-For-jQuery-UI-Month-Year-Picker-mtz-monthpicker.html-->
+                // JQUERY MTZ.MONTHPICKER
+                //https://www.jqueryscript.net/time-clock/jQuery-Plugin-For-jQuery-UI-Month-Year-Picker-mtz-monthpicker.html
 
 
 
-                <!--$('.monthpicker').monthpicker({-->
-                    <!--pattern: 'mm/yyyy',-->
-                    <!--monthNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],-->
-                <!--});-->
-            <!--});-->
-        <!--</script>-->
+                $('.monthpicker').monthpicker({
+                    pattern: 'mm/yyyy',
+                    monthNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                });
+            });
+        </script>
         <script src="{% static 'js/cep.js' %}"></script>
     {% endblock %}
 

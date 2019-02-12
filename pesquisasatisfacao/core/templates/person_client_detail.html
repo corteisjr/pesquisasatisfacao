@@ -6,9 +6,14 @@
 <div class="card larger" id="card-radius">
 
     {% for client in clients %}
-        <div class="row">
-            <a class="col s12 waves-effect waves-light btn-small" href="{% url 'seach_create' %}"><i class="material-icons right">cloud</i>Nova pesquisa para: {{client.name}}</a>
-        </div>
+
+    <div class="center-align">
+        <a class="waves-effect waves-light btn #bf360c #1b5e20 green darken-4" href="{% url 'seach_create' %}"><i class="material-icons right">cloud</i>Nova Pesquisa</a>
+        <a class="waves-effect waves-light btn deep-orange darken-4" href="{% url 'person_client_update' pk=client.id %}"><i class="material-icons right">perm_identity</i>Edita Cadastro</a>
+    </div>
+    <strong>
+        <div class="#cfd8dc blue-grey lighten-4 center">{{client.name}}</div>
+    </strong>
     {% empty %}
 
     {% endfor %}
