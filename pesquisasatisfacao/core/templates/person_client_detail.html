@@ -6,17 +6,25 @@
 <div class="card larger" id="card-radius">
 
     {% for client in clients %}
+        <div class="fixed-action-btn click-to-toggle">
+            <a class="btn-floating btn-large red">
+                <i class="large material-icons">add</i>
+            </a>
+            <ul>
+                <li><a href="{% url 'seach_create' %}" class="btn-floating red"><i class="material-icons">event</i></a></li>
+                <li><a href="{% url 'person_client_update' pk=client.id %}" class="btn-floating yellow darken-1"><i class="material-icons">person</i></a></li>
+                <li><a href="{% url 'person_client_list' %}" class="btn-floating green"><i class="material-icons">list</i></a></li>
+                <li><a href="{% url 'question_list' %}" class="btn-floating blue"><i class="material-icons">question_answer</i></a></li>
+            </ul>
+        </div>
 
-    <div class="center-align">
-        <a class="waves-effect waves-light btn #bf360c #1b5e20 green darken-4" href="{% url 'seach_create' %}"><i class="material-icons right">cloud</i>Nova Pesquisa</a>
-        <a class="waves-effect waves-light btn deep-orange darken-4" href="{% url 'person_client_update' pk=client.id %}"><i class="material-icons right">perm_identity</i>Edita Cadastro</a>
-    </div>
-    <strong>
-        <div class="#cfd8dc blue-grey lighten-4 center">{{client.name}}</div>
-    </strong>
+
+        <div class="card-panel #424242 grey darken-3 center" id="title-panel">{{client.name}}</div>
     {% empty %}
 
     {% endfor %}
+
+
 
     <table>
         <thead class="#cfd8dc blue-grey lighten-4">
@@ -42,9 +50,7 @@
                     <td>{{ search.researched }}</td>
                 </tr>
             {% empty %}
-                <li>
-                    Sem registros
-                </li>
+                <div class="card-panel teal lighten-2 center">Sem registros</div>
             {% endfor %}
         </tbody>
     </table>
