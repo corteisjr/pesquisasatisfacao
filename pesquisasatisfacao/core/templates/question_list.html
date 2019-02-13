@@ -30,9 +30,7 @@
                     <td>{{ question.get_level_display }}</td>
                 </tr>
             {% empty %}
-                <li>
-                    Sem registros
-                </li>
+                <div class="card-panel #424242 grey darken-3 center" id="empty-panel">NENHUM REGISTRO ENCONTRADO!</div>
             {% endfor %}
         </table>
     </div>
