@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # 'material.frontend',
     'material.admin',
     'pesquisasatisfacao.core',
+    'pesquisasatisfacao.accounts',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,8 @@ USE_THOUSAND_SEPARATOR = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+
+#Auth
+LOGIN_URL = 'accounts:login'
+LOGOUT_REDIRECT_URL = 'accounts:logout'
+LOGIN_REDIRECT_URL = 'home'

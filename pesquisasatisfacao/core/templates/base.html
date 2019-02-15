@@ -33,7 +33,12 @@
             <li><a href="{% url 'person_client_create' %}">Cliente</a></li>
             <li><a href="{% url 'person_client_list' %}">Lista Clientes</a></li>
             <li><a href="{% url 'question_create' %}">Cadastrar nova Pergunta</a></li>
-            <!--<li><a href="mobile.html">Mobile</a></li>-->
+            <li><a href="{% url 'accounts:register' %}">Cadastre-se</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'accounts:login' %}">Login</a></li>
+            {% endif %}
             </ul>
         </div>
     </nav>
