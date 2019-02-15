@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from pesquisasatisfacao.accounts.models import UserInfo
+from pesquisasatisfacao.accounts.models import UserInfo, Horario
 from material import *
 
 from pesquisasatisfacao.core.models import Client
@@ -16,6 +16,7 @@ class RegistrationForm(forms.Form, UserCreationForm):
             'username',
             'nomecompleto',
             'base',
+            'horario',
         )
 
     layout = Layout(
@@ -23,5 +24,22 @@ class RegistrationForm(forms.Form, UserCreationForm):
                  Row('password1', 'password2')),
         Fieldset('Dados Pessoais', 'nomecompleto',
                  Row(Span12('base'),),
+                 Row(Span12('horario'), ),
                  ))
 
+
+class ScheduleForm(forms.ModelForm):
+
+    class Meta:
+        model = Horario
+        fields = (
+            'descricao',
+            'entrada',
+            'saida_almoco',
+            'volta_almoco',
+            'saida',
+        )
+
+    layout = Layout(
+        Fieldset('Registro de horário.', 'descricao',
+                 Row('entrada', 'saida_almoco', 'volta_almoco', 'saida')),)
