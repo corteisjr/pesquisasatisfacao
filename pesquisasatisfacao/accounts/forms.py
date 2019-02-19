@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from pesquisasatisfacao.accounts.models import UserInfo, Horario
+from django.forms import inlineformset_factory
+
+from pesquisasatisfacao.accounts.models import UserInfo, Horario, WorkSchedule, WorkScheduleItem
 from material import *
 
 from pesquisasatisfacao.core.models import Client
@@ -33,13 +35,32 @@ class ScheduleForm(forms.ModelForm):
     class Meta:
         model = Horario
         fields = (
-            'descricao',
-            'entrada',
-            'saida_almoco',
-            'volta_almoco',
-            'saida',
+            'description',
+            'entrance',
+            'lunch_entrance',
+            'lunch_out',
+            'exit',
         )
 
     layout = Layout(
-        Fieldset('Registro de horário.', 'descricao',
-                 Row('entrada', 'saida_almoco', 'volta_almoco', 'saida')),)
+        Fieldset('Registro de horário.', 'description',
+                 Row('entrance', 'lunch_entrance', 'lunch_out', 'exit')),)
+
+
+class WorkScheduleForm(forms.ModelForm):
+
+    class Meta:
+        model = WorkSchedule
+        fields = '__all__'
+        exclude = ()
+
+    layout = Layout(
+        Fieldset("Preencha com o Período",
+                 Row('user', 'period'),),)
+
+
+WorkScheduleItemFormSet = inlineformset_factory(WorkSchedule, WorkScheduleItem,
+                                                exclude=('id',),
+                                                can_delete=True,
+                                                fields=('day', 'entrance', 'lunch_entrance', 'lunch_out', 'exit'),
+                                                extra=1)

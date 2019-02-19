@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Count, Q
 from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, render_to_response, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.views.generic import TemplateView
 
@@ -15,7 +15,7 @@ from pesquisasatisfacao.core.models import Search, Question, Client, SearchItem
 def home(request):
     return render(request, 'base.html')
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 
 
 # def person_create(request):
@@ -348,7 +348,7 @@ def question_level_view2(request):
     dump = json.dumps(chart)
 
     return render(request, 'dash2.html', {'chart': dump})
-#
+
 # def addQuestions(**data):
 #     questions = Question.objects.all()
 #
@@ -480,5 +480,3 @@ def pesquisa_update(request, pk):
     forms = [formset.empty_form] + formset.forms
     context = {'form': form, 'formset': formset, 'forms': forms}
     return render(request, 'receipt_form.html', context)
-
-

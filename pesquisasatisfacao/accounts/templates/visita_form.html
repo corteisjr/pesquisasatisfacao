@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% load material_form %}
+{% load i18n %}
+{% block container %}
+
+<div class="card larger" id="card-radius">
+
+    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <div class="card-content">
+                {% form %}
+
+                {% endform %}
+            </div>
+
+        <div class="card-content">
+            <table class="highlight">
+                <thead class="#cfd8dc blue-grey lighten-4">
+                <tr>
+                    <th class="left-align">Dia</th>
+                    <th class="left-align">Entrada</th>
+                    <th class="left-align">Entrada Almoço</th>
+                    <th class="left-align">Volta Almoço</th>
+                    <th class="left-align">Saída</th>
+                    <th></th>
+                </tr>
+
+                </thead>
+
+                {{ formset.management_form }}
+
+                <tbody>
+                    {% for item_form in formset %}
+
+                        <tr>
+
+                            <td>{{ item_form.day.errors }} {{ item_form.day }}</td>
+                            <td>{{ item_form.entrance.errors }} {{ item_form.entrance }}</td>
+                            <td>{{ item_form.lunch_entrance.errors }} {{ item_form.lunch_entrance }}</td>
+                            <td>{{ item_form.lunch_out.errors }} {{ item_form.lunch_out }}</td>
+                            <td>{{ item_form.exit.errors }} {{ item_form.exit }}</td>
+                            <td>{{ item_form.id.errors }} {{ item_form.id }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <br><br>
+
+            <div class="card-action">
+                <div class="right-align">
+                    <strong>Salvar e ir para:</strong>
+                </div>
+                <div class="right-align">
+                    <button name="btn_submit_1" class="waves-effect waves-light btn" type="submit">Pesquisas de todos</button>
+                    <button name="btn_submit_2" class="waves-effect waves-light btn" type="submit">Pesquisas Deste Cliente</button>
+                </div>
+            </div>
+    </form>
+
+</div>
+
+{% endblock %}
+
+        <script src="{% static 'js/jquery.formset.min.js' %}"></script>
+        <script src="{% static 'js/invoice_form.js' %}"></script>
+
