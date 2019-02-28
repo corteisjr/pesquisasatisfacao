@@ -207,8 +207,8 @@ class GeneratePDF(View):
 def work_schedule_list(request):
     q = request.GET.get('searchInput')
     if q:
-        work_schedules = WorkSchedule.objects.filter(Q(user__icontains=q) | Q(period__icontains=q))
+        work_schedules = WorkSchedule.objects.filter(Q(user=request.user) | Q(period__icontains=q))
     else:
-        work_schedules = WorkSchedule.objects.all()
+        work_schedules = WorkSchedule.objects.filter(Q(user=request.user))
     context = {'work_schedules': work_schedules}
     return render(request, 'schedule_list.html', context)
