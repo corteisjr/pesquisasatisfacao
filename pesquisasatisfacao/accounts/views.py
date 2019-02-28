@@ -155,7 +155,8 @@ def work_schedule_update(request, pk):
 
 def admin_receipt_pdf(request, id=id):
     work_schedule = WorkSchedule.objects.select_related('user__userinfo').get(id=id)
-    work_schedule_itens = WorkScheduleItem.objects.select_related('workschedule').filter(workschedule_id=id)
+    work_schedule_itens = WorkScheduleItem.objects.select_related('workschedule').filter(workschedule_id=id)\
+        .order_by('day')
 
     print(work_schedule_itens.query)
 
