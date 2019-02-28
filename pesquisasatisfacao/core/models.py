@@ -78,6 +78,15 @@ class Client(models.Model):
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
 
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+        self.logradouro = self.logradouro.upper()
+        self.bairro = self.bairro.upper()
+        self.cidade = self.cidade.upper()
+        self.estado = self.estado.upper()
+
+        super(Client, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 

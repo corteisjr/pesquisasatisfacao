@@ -93,22 +93,16 @@ def work_schedule_create(request):
             # person_instance = Person.objects.get(pk=request.session["person_id"])
             return render(request, 'work_schedule_create.html', {'form': form})
     else:
-        if 'person_id' in request.session:
-            # Recupera variável da session
-            pessoa_id = request.session['person_id']
-            from datetime import date
-            context = {'form': WorkScheduleForm(initial={'user': pessoa_id,
-                                                         'period': date.today().strftime('%m/%Y')})}
-            # Caso precise preencher mais de um campo no form.
-            # context = {'form': SearchForm(initial={'person': pessoa_id, 'search_key': '11-2018'})}
+        from datetime import date
+        context = {'form': WorkScheduleForm(initial={'user': request.user,
+                                                     'period': date.today().strftime('%m/%Y')})}
+        # Caso precise preencher mais de um campo no form.
+        # context = {'form': SearchForm(initial={'person': pessoa_id, 'search_key': '11-2018'})}
 
-            # Exclui variável da session
-            del request.session['person_id']
+        # Exclui variável da session
+        del request.session['person_id']
 
-            return render(request, 'work_schedule_create.html', context)
-        else:
-            # Caso person_id não exista na session ele redireciona para lista de clientes pesquisados.
-            return HttpResponseRedirect('/cliente/listar')
+        return render(request, 'work_schedule_create.html', context)
 
 
 def work_schedule_update(request, id):

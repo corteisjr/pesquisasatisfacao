@@ -20,6 +20,12 @@ class UserInfo(User):
         verbose_name = 'Perfil de Usuário'
         verbose_name_plural = 'Perfil de Usuários'
 
+    def save(self, *args, **kwargs):
+        self.nomecompleto = self.nomecompleto.upper()
+        self.funcao = self.funcao.upper()
+
+        super(UserInfo, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.nomecompleto
 
@@ -34,6 +40,11 @@ class Horario(models.Model):
     class Meta:
         verbose_name = 'Horário de Usuário'
         verbose_name_plural = 'Horário de Usuários'
+
+    def save(self, *args, **kwargs):
+        self.description = self.description.upper()
+
+        super(Horario, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.description
