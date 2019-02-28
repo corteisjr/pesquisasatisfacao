@@ -111,10 +111,10 @@ def work_schedule_create(request):
             return HttpResponseRedirect('/cliente/listar')
 
 
-def work_schedule_update(request, pk):
+def work_schedule_update(request, id):
     # Pega a chave da URL acima com (request, pk)
     # joga na variável invoice na linha abaixo passando o modelo MESTRE e os parâmetros que desejo como filtro
-    work_schedule = get_object_or_404(WorkSchedule, pk=pk)
+    work_schedule = get_object_or_404(WorkSchedule, id=id)
     # print(request.method)
     if request.method == 'POST':
         # Os formulários InvoiceForm receberá o request.POST com os campos em branco
@@ -126,20 +126,14 @@ def work_schedule_update(request, pk):
             with transaction.atomic():
                 form.save()
                 formset.save()
-            return redirect('/cliente/listar/')
-            # return redirect('/cliente/' + str(search.person.pk) + '/pesquisas')
-
-            # if 'btn_submit_1' in request.POST:
-            #     return redirect('/cliente/listar/')
-            # else:
-            #     return redirect('/cliente/' + str(work_schedule.person.pk) + '/pesquisas')
+            return redirect('/accounts/ficha/listar/')
     else:
         # Caso não seja POST ele trará o formulário com as informações preenchidas do parâmetro invoice
         # que pegamos da URL quando passamos o request de pk na entrada da função acima.
         form = WorkScheduleForm(instance=work_schedule)
         # Recupera a instancia de form e chama a função add_work_schedule_item
         # para popular o detalhe com os dias do mês e o usuário poderá editar.
-        add_work_schedule_item(period=work_schedule.period, key=work_schedule.pk)
+        add_work_schedule_item(period=work_schedule.period, key=work_schedule.id)
 
         formset = WorkScheduleItemFormSet(instance=work_schedule)
 

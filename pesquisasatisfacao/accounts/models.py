@@ -57,7 +57,7 @@ class WorkSchedule(models.Model):
         ordering = ('created_on',)
 
     def get_absolute_url(self):
-        return reverse('accounts:work_schedule_update', args=[str(self.pk)])
+        return reverse('accounts:work_schedule_update', args=[str(self.id)])
 
     def __str__(self):
         return self.period

@@ -20,7 +20,7 @@ urlpatterns = [
     path('accounts/horario/', views.schedule, name='schedule'),
     path('accounts/ficha/listar/', views.work_schedule_list, name='work_schedule_list'),
     path('accounts/ficha/nova/', views.work_schedule_create, name='work_schedule_create'),
-    path('accounts/ficha/<int:pk>/editar/', views.work_schedule_update, name='work_schedule_update'),
+    path('accounts/ficha/<int:id>/editar/', views.work_schedule_update, name='work_schedule_update'),
 
     path('<int:id>/', GeneratePDF.as_view(), name='generatepdf'),
     path('<int:id>/pdf/', views.admin_receipt_pdf, name='admin_receipt_pdf'),

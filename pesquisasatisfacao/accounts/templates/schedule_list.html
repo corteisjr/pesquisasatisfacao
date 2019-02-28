@@ -30,7 +30,7 @@
                         <a>{{ work_schedule.id|linebreaks }}</a>
                     </td>
                     <td class="center-align">
-                        <a>{{ work_schedule.period|linebreaks }}</a>
+                        <a href="{% url 'accounts:work_schedule_update' id=work_schedule.id %}">{{ work_schedule.period|linebreaks }}</a>
                     </td>
                     <td>
                         {{ work_schedule.user|linebreaks }}
