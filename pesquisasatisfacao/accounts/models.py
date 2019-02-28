@@ -12,7 +12,7 @@ class UserInfo(User):
     nomecompleto = models.CharField('Nome Completo', max_length=100, null=False, blank=False)
     base = models.ForeignKey('core.client', null=True, blank=True, related_name="base",
                              on_delete=models.CASCADE, verbose_name="Base ou Representação")
-    horario = models.ForeignKey('accounts.horario', null=True, blank=True, related_name="horario",
+    horario = models.ForeignKey('accounts.horario', null=False, blank=False, related_name="horario",
                                 on_delete=models.CASCADE, verbose_name="Escolha seu Horário")
     funcao = models.CharField('Função', max_length=50, null=False, blank=False)
 
