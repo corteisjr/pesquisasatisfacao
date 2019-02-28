@@ -1,3 +1,6 @@
+import calendar
+from datetime import date
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -11,6 +14,7 @@ class UserInfo(User):
                              on_delete=models.CASCADE, verbose_name="Base ou Representação")
     horario = models.ForeignKey('accounts.horario', null=True, blank=True, related_name="horario",
                                 on_delete=models.CASCADE, verbose_name="Escolha seu Horário")
+    funcao = models.CharField('Função', max_length=50, null=False, blank=False)
 
     class Meta:
         verbose_name = 'Perfil de Usuário'
@@ -21,7 +25,7 @@ class UserInfo(User):
 
 
 class Horario(models.Model):
-    description = models.CharField('Descrição do Horário', max_length=100, null=False, blank=False)
+    description = models.CharField('Descrição do Horário.', max_length=100, null=False, blank=False)
     entrance = models.TimeField('Entrada', max_length=5, null=False, blank=False)
     lunch_entrance = models.TimeField('Saída almoço', max_length=5, null=False, blank=False)
     lunch_out = models.TimeField('Volta almoço', max_length=5, null=False, blank=False)
@@ -32,7 +36,7 @@ class Horario(models.Model):
         verbose_name_plural = 'Horário de Usuários'
 
     def __str__(self):
-        return self.descricao
+        return self.description
 
 
 class WorkSchedule(models.Model):
@@ -60,10 +64,23 @@ class WorkSchedule(models.Model):
 
 
 class WorkScheduleItem(models.Model):
+    WEEKDAY_CHOICES = (
+        ('6', 'Domingo'),
+        ('0', 'Segunda'),
+        ('1', 'Terça'),
+        ('2', 'Quarta'),
+        ('3', 'Quinta'),
+        ('4', 'Sexta'),
+        ('5', 'Sábado'),
+        ('7', 'Feriado'),
+        ('8', 'Faltou'),
+    )
+
     workschedule = models.ForeignKey("accounts.workschedule", null=False, blank=False, related_name="children",
                                      on_delete=models.CASCADE,
                                      verbose_name="Ficha")
     day = models.DateField('Dt. Agenda', )
+    week_day = models.CharField('Dia Semana', max_length=1, choices=WEEKDAY_CHOICES)
     entrance = models.TimeField('Entrada', max_length=5, null=True, blank=True)
     lunch_entrance = models.TimeField('Saída almoço', max_length=5, null=True, blank=True)
     lunch_out = models.TimeField('Volta almoço', max_length=5, null=True, blank=True)
@@ -72,6 +89,11 @@ class WorkScheduleItem(models.Model):
     class Meta:
         verbose_name = 'Ficha de Visita Detalhe'
         verbose_name_plural = 'Fichas de Visita Detalhe'
+
+    @property
+    def dia_semana(self):
+        my_date = date.self.day
+        return calendar.day_name[my_date.weekday()]
 
     def __str__(self):
         return self.workschedule.period

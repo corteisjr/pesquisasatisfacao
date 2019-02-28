@@ -19,6 +19,7 @@ class RegistrationForm(forms.Form, UserCreationForm):
             'nomecompleto',
             'base',
             'horario',
+            'funcao',
         )
 
     layout = Layout(
@@ -27,6 +28,7 @@ class RegistrationForm(forms.Form, UserCreationForm):
         Fieldset('Dados Pessoais', 'nomecompleto',
                  Row(Span12('base'),),
                  Row(Span12('horario'), ),
+                 Row(Span12('funcao'), ),
                  ))
 
 
@@ -62,5 +64,5 @@ class WorkScheduleForm(forms.ModelForm):
 WorkScheduleItemFormSet = inlineformset_factory(WorkSchedule, WorkScheduleItem,
                                                 exclude=('id',),
                                                 can_delete=True,
-                                                fields=('day', 'entrance', 'lunch_entrance', 'lunch_out', 'exit'),
+                                                fields=('day', 'week_day', 'entrance', 'lunch_entrance', 'lunch_out', 'exit'),
                                                 extra=1)

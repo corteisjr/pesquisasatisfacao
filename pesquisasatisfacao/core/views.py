@@ -349,30 +349,6 @@ def question_level_view2(request):
 
     return render(request, 'dash2.html', {'chart': dump})
 
-# def addQuestions(**data):
-#     questions = Question.objects.all()
-#
-#     for question in questions:
-#
-#         try:
-#             Search.objects.get(
-#                 search_key=data['search_key'],
-#                 person=data['person'],
-#                 researched=data['researched'],
-#                 question=question,
-#             )
-#             print('existe')
-#         except Search.DoesNotExist:
-#             Search.objects.get_or_create(
-#                 search_key=data['search_key'],
-#                 person=data['person'],
-#                 researched=data['researched'],
-#                 question=question
-#             )
-#             print('Não existe')
-#
-#     return HttpResponseRedirect('/')
-
 
 class SearchDetailWiew(TemplateView):
     template_name = 'search.html'

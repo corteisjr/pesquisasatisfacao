@@ -11,5 +11,5 @@ python-decouple==3.1
 pytz==2018.7
 sqlparse==0.2.4
 static3==0.7.0
-
-
+WeasyPrint==0.42.3
+xhtml2pdf==0.2.3

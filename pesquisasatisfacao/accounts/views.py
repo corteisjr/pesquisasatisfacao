@@ -1,14 +1,20 @@
 import calendar
 import datetime
 
+import weasyprint
 from django.db import transaction
-from django.http import HttpResponseRedirect
+from django.db.models import Q
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 
 # Create your views here.
+from django.template.loader import render_to_string, get_template
+from django.views import View
+
 from pesquisasatisfacao.accounts.forms import RegistrationForm, ScheduleForm, WorkScheduleForm, WorkScheduleItemFormSet
 from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem
+from pesquisasatisfacao.utils import render_to_pdf
 
 
 def register(request):
@@ -24,7 +30,6 @@ def register(request):
             return redirect(settings.LOGIN_URL)
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            print(form)
             return render(request, 'register.html', {'form': form})
     else:
         context = {'form': RegistrationForm()}
@@ -44,7 +49,6 @@ def schedule(request):
             return redirect(settings.LOGIN_REDIRECT_URL)
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            print(form)
             return render(request, 'schedule.html', {'form': form})
     else:
         context = {'form': ScheduleForm()}
@@ -58,10 +62,16 @@ def add_work_schedule_item(period, key):
     work_schedule = get_object_or_404(WorkSchedule, pk=key)
 
     for day_number in range(1, num_days_in_month + 1):
-        # a = str(day_number) + period
-        # m, y = a.split('/')
         strdate = datetime.datetime(int(y), int(m), day_number)
-        WorkScheduleItem.objects.get_or_create(day=strdate, workschedule=work_schedule)
+        my_date = calendar.weekday(int(y), int(m), day_number)
+        # my_date = calendar.day_name[strdate.weekday()]
+        WorkScheduleItem.objects.get_or_create(day=strdate,
+                                               week_day=my_date,
+                                               workschedule=work_schedule,
+                                               entrance='09:00',
+                                               lunch_entrance='12:00',
+                                               lunch_out='13:00',
+                                               exit='18:00')
 
 
 def work_schedule_create(request):
@@ -112,7 +122,6 @@ def work_schedule_update(request, pk):
         formset = WorkScheduleItemFormSet(request.POST, instance=work_schedule)
 
         # Valida os formulários MESTRE(WorkScheduleForm) e DETALHE(WorkScheduleItemFormSet)
-        print(form.errors, formset.errors)
         if form.is_valid() and formset.is_valid():
             with transaction.atomic():
                 form.save()
@@ -143,3 +152,62 @@ def work_schedule_update(request, pk):
     context = {'form': form, 'formset': formset, 'forms': forms}
     return render(request, 'visita_form.html', context)
 
+
+def admin_receipt_pdf(request, id=id):
+    work_schedule = WorkSchedule.objects.select_related('user__userinfo').get(id=id)
+    work_schedule_itens = WorkScheduleItem.objects.select_related('workschedule').filter(workschedule_id=id)
+
+    print(work_schedule_itens.query)
+
+    context = {
+        'work_schedule': work_schedule,
+        'work_schedule_itens': work_schedule_itens
+    }
+
+    html = render_to_string('schedule_report.html', context)
+    response = HttpResponse(content_type='recibo/pdf')
+    response['Content-Disposition'] = 'filename="recibo_{}.pdf"'.format(work_schedule.id)
+    weasyprint.HTML(string=html,
+                    base_url=request.build_absolute_uri()).write_pdf(response,
+                                                                     stylesheets=[weasyprint.CSS(settings.STATIC_ROOT +
+                                                                                                 '/css/pdf.css')])
+    return response
+
+
+class GeneratePDF(View):
+    def get(self, request, id, *args, **kwargs):
+        template = get_template('schedule_report.html')
+
+        work_schedule = WorkSchedule.objects.get(id=id)
+        work_schedule_item = WorkScheduleItem.objects.filter(workschedule_id=id)
+
+        from django.db import connection
+        print(connection.queries.work_schedule_item)
+
+        context = {
+            'work_schedule': work_schedule,
+            'work_schedule_item': work_schedule_item
+        }
+
+        html = template.render(context)
+        pdf = render_to_pdf('schedule_report.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" % "12341231"
+            content = "inline; filename='%s'" % filename
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" % filename
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+
+
+def work_schedule_list(request):
+    q = request.GET.get('searchInput')
+    if q:
+        work_schedules = WorkSchedule.objects.filter(Q(user__icontains=q) | Q(period__icontains=q))
+    else:
+        work_schedules = WorkSchedule.objects.all()
+    context = {'work_schedules': work_schedules}
+    return render(request, 'schedule_list.html', context)
