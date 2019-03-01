@@ -32,15 +32,25 @@
                 <tbody>
                     {% for item_form in formset %}
 
-                        <tr>
-                            <td>{{ item_form.week_day.errors }} {{ item_form.week_day }}</td>
-                            <td>{{ item_form.day.errors }} {{ item_form.day }}</td>
-                            <td>{{ item_form.entrance.errors }} {{ item_form.entrance }}</td>
-                            <td>{{ item_form.lunch_entrance.errors }} {{ item_form.lunch_entrance }}</td>
-                            <td>{{ item_form.lunch_out.errors }} {{ item_form.lunch_out }}</td>
-                            <td>{{ item_form.exit.errors }} {{ item_form.exit }}</td>
-                            <td>{{ item_form.id.errors }} {{ item_form.id }}</td>
-                        </tr>
+                          <tr class=" {% if item_form.week_day == '5' %}
+                                            #c5e1a5 light-green lighten-3
+                                        {% elif item_form.get_week_day == '6' %}
+                                            #bbdefb blue lighten-4
+                                        {% elif item_form.get_week_day == '7' %}
+                                            #ff8a65 deep-orange lighten-2
+                                        {% elif item_form.get_week_day == '8' %}
+                                            #e0e0e0 grey lighten-2
+                                        {% else %}
+                                            item_form.get_week_day
+                                        {% endif %}">
+                                <td >{{ item_form.week_day.errors }} {{ item_form.week_day }}</td>
+                                <td>{{ item_form.day.errors }} {{ item_form.day }}</td>
+                                <td>{{ item_form.entrance.errors }} {{ item_form.entrance }}</td>
+                                <td>{{ item_form.lunch_entrance.errors }} {{ item_form.lunch_entrance }}</td>
+                                <td>{{ item_form.lunch_out.errors }} {{ item_form.lunch_out }}</td>
+                                <td>{{ item_form.exit.errors }} {{ item_form.exit }}</td>
+                                <td>{{ item_form.id.errors }} {{ item_form.id }}</td>
+                          </tr>
 
                     {% endfor %}
 
