@@ -52,7 +52,7 @@ h1 {
 footer{
     display: block;
     position: absolute;
-	bottom: 0;
+	bottom: 1;
     width:100%;
     margin-bottom: -11.5%;
     text-align: center;
