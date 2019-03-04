@@ -32,16 +32,16 @@
                 <tbody>
                     {% for item_form in formset %}
 
-                          <tr class=" {% if item_form.week_day == '5' %}
+                          <tr class=" {% if item_form.week_day.value == '5' %}
                                             #c5e1a5 light-green lighten-3
-                                        {% elif item_form.get_week_day == '6' %}
+                                        {% elif item_form.week_day.value == '6' %}
                                             #bbdefb blue lighten-4
-                                        {% elif item_form.get_week_day == '7' %}
+                                        {% elif item_form.week_day.value == '7' %}
                                             #ff8a65 deep-orange lighten-2
-                                        {% elif item_form.get_week_day == '8' %}
+                                        {% elif item_form.week_day.value == '8' %}
                                             #e0e0e0 grey lighten-2
                                         {% else %}
-                                            item_form.get_week_day
+                                            item_form.week_day.value
                                         {% endif %}">
                                 <td >{{ item_form.week_day.errors }} {{ item_form.week_day }}</td>
                                 <td>{{ item_form.day.errors }} {{ item_form.day }}</td>

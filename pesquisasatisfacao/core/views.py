@@ -145,10 +145,9 @@ def question_create(request):
         return render(request, 'question_create.html', context)
 
 
-def question_populate(request):
+def question_populate():
 
     from pesquisasatisfacao.core import create_data
-    print(create_data.question_add)
 
     lista = []
 

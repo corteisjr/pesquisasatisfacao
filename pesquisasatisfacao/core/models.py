@@ -43,13 +43,6 @@ class Product(models.Model):
 
 
 class Client(models.Model):
-    # SYSTEM_CHOICES = (
-    #     ('0', 'Pack'),
-    #     ('1', 'Shop'),
-    #     ('2', 'IShop'),
-    #     ('3', 'Immobile'),
-    #     ('4', 'Bimer'),
-    # )
     cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
     name = models.CharField('Nome', max_length=100)
     phone = models.CharField('Telefone', max_length=50, null=True, blank=True)

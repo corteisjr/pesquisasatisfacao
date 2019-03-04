@@ -1,5 +1,6 @@
 import calendar
 import datetime
+import random
 
 import weasyprint
 from django.db import transaction
@@ -15,6 +16,40 @@ from django.views import View
 from pesquisasatisfacao.accounts.forms import RegistrationForm, ScheduleForm, WorkScheduleForm, WorkScheduleItemFormSet
 from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem
 from pesquisasatisfacao.utils import render_to_pdf
+
+
+def random_time():
+    entra = random.randint(8, 9)
+    almoco = random.randint(entra + 3, 13)
+
+    if entra == 8:
+        value_en = str(entra).zfill(2) + ':' + str(random.randint(45, 59)).zfill(2)
+    else:
+        value_en = str(entra).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
+    # -----------------------------------------------------------------------------
+
+    if almoco == 11:
+        value_ea = str(almoco).zfill(2) + ':' + str(random.randint(45, 59)).zfill(2)
+    elif almoco != 11:
+        value_ea = str(almoco).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
+
+    # -----------------------------------------------------------------------------
+
+    if value_ea == 11:
+        value_va = str(almoco + 1).zfill(2) + ':' + str(random.randint(45, 59)).zfill(2)
+    elif value_ea != 12:
+        value_va = str(almoco + 1).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
+
+    # -----------------------------------------------------------------------------
+
+    if almoco == 11:
+        value_out = str(almoco + 7).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
+    elif almoco == 12:
+        value_out = str(almoco + 6).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
+    elif almoco == 13:
+        value_out = str(almoco + 5).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
+
+    return value_en, value_ea, value_va, value_out
 
 
 def register(request):
@@ -65,13 +100,21 @@ def add_work_schedule_item(period, key):
         strdate = datetime.datetime(int(y), int(m), day_number)
         my_date = calendar.weekday(int(y), int(m), day_number)
         # my_date = calendar.day_name[strdate.weekday()]
-        WorkScheduleItem.objects.get_or_create(day=strdate,
-                                               week_day=my_date,
-                                               workschedule=work_schedule,
-                                               entrance='09:00',
-                                               lunch_entrance='12:00',
-                                               lunch_out='13:00',
-                                               exit='18:00')
+
+        (value_en, value_ea, value_va, value_out) = random_time()
+        if my_date not in(5, 6, 7):
+            WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                   week_day=my_date,
+                                                   workschedule=work_schedule,
+                                                   entrance=value_en,
+                                                   lunch_entrance=value_ea,
+                                                   lunch_out=value_va,
+                                                   exit=value_out)
+        else:
+            WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                   week_day=my_date,
+                                                   workschedule=work_schedule,
+                                                   )
 
 
 def work_schedule_create(request):
@@ -127,7 +170,7 @@ def work_schedule_update(request, id):
         form = WorkScheduleForm(instance=work_schedule)
         # Recupera a instancia de form e chama a função add_work_schedule_item
         # para popular o detalhe com os dias do mês e o usuário poderá editar.
-        add_work_schedule_item(period=work_schedule.period, key=work_schedule.id)
+        #add_work_schedule_item(period=work_schedule.period, key=work_schedule.id)
 
         formset = WorkScheduleItemFormSet(instance=work_schedule)
 
@@ -164,7 +207,7 @@ def admin_receipt_pdf(request, id=id):
 
 
 class GeneratePDF(View):
-    def get(self, request, id, *args, **kwargs):
+    def get(self, request, id):
         template = get_template('schedule_report.html')
 
         work_schedule = WorkSchedule.objects.get(id=id)
