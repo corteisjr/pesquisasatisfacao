@@ -8,44 +8,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from django.views.generic import TemplateView
 
-from pesquisasatisfacao.core.forms import QuestionForm, ClientForm, SearchForm, SearchItemFormSet
+from pesquisasatisfacao.core.forms import (QuestionForm,
+                                           ClientForm,
+                                           SearchForm,
+                                           SearchItemFormSet)
+
 from pesquisasatisfacao.core.models import Search, Question, Client, SearchItem
 
 
 def home(request):
     return render(request, 'base.html')
 
-# -----------------------------------------------------------------------------------------------------------------------
 
-
-# def person_create(request):
-#     if request.method == 'POST':
-#         form = PersonForm(request.POST)
-#
-#         if form.is_valid():
-#             print('<<<<==== FORM VALIDO ====>>>>')
-#             new = form.save(commit=False)
-#             new.save()
-#             #form.save_m2m()
-#
-#             return HttpResponseRedirect('/pessoa/listar')
-#         else:
-#             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-#             print(form)
-#             return render(request, 'person_create.html', {'form':form})
-#     else:
-#         context = {'form': PersonForm()}
-#         return render(request, 'person_create.html', context)
-
-
-# def person_list2(request):
-#     persons = Person.objects.all().order_by("cdalterdata")
-#     return render(request, 'person_list.html', {'persons': persons})
-
-
-# -----------------------------------------------------------------------------------------------------------------------
-
-
+# ----------------------------------------------------------------------------------------------------------------------
 def person_client_create(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
@@ -117,12 +92,27 @@ def person_client_list(request):
                                         Q(last_search__icontains=q)
                                         )
     else:
-        clients = Client.objects.all()
+        clients = Client.objects.filter(is_representative=False)
     context = {'clients': clients}
     return render(request, 'person_client_list.html', context)
 
 
-# -----------------------------------------------------------------------------------------------------------------------
+def person_representative_list(request):
+    q = request.GET.get('searchInput')
+    print(request.GET)
+    if q:
+        clients = Client.objects.filter(Q(is_representative=True),
+                                        Q(name__icontains=q) |
+                                        Q(cdalterdata__icontains=q) |
+                                        Q(last_search__icontains=q)
+                                        )
+    else:
+        clients = Client.objects.filter(is_representative=True)
+    context = {'clients': clients}
+    return render(request, 'person_client_list.html', context)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 def question_create(request):
@@ -164,7 +154,7 @@ def question_list(request):
     questions = Question.objects.all().order_by("level", "id", "question")
     return render(request, 'question_list.html', {'questions': questions})
 
-# -----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 def seach_create(request):
@@ -208,7 +198,7 @@ def search_list(request):
     seachs = Search.objects.all()
     return render(request, 'search_list.html', {'seachs': seachs})
 
-# -----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 def person_client_detail(request, pk):

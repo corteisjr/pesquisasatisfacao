@@ -50,6 +50,25 @@ class Horario(models.Model):
         return self.description
 
 
+class Feriado(models.Model):
+    description = models.CharField('Descrição do Feriado.', max_length=100, null=False, blank=False)
+    date = models.DateField('Data',)
+    abbreviated_date = models.CharField('Dia/Mês dd/mm', max_length=5, null=True, blank=True)
+    permanent = models.BooleanField('Feriado fixo',)
+
+    class Meta:
+        verbose_name = 'Feriado'
+        verbose_name_plural = 'Feriados'
+
+    def save(self, *args, **kwargs):
+        self.description = self.description.upper()
+        self.abbreviated_date = self.date.strftime('%d/%m')
+        super(Feriado, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.description
+
+
 class WorkSchedule(models.Model):
     period = models.CharField(
         'Período', max_length=7, db_index=False)

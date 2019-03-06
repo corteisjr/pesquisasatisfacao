@@ -13,7 +13,11 @@ from django.conf import settings
 from django.template.loader import render_to_string, get_template
 from django.views import View
 
-from pesquisasatisfacao.accounts.forms import RegistrationForm, ScheduleForm, WorkScheduleForm, WorkScheduleItemFormSet
+from pesquisasatisfacao.accounts.forms import (RegistrationForm,
+                                               ScheduleForm,
+                                               WorkScheduleForm,
+                                               WorkScheduleItemFormSet)
+
 from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem
 from pesquisasatisfacao.utils import render_to_pdf
 
@@ -26,21 +30,21 @@ def random_time():
         value_en = str(entra).zfill(2) + ':' + str(random.randint(45, 59)).zfill(2)
     else:
         value_en = str(entra).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
-    # -----------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------
 
     if almoco == 11:
         value_ea = str(almoco).zfill(2) + ':' + str(random.randint(45, 59)).zfill(2)
     elif almoco != 11:
         value_ea = str(almoco).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
 
-    # -----------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------
 
     if value_ea == 11:
         value_va = str(almoco + 1).zfill(2) + ':' + str(random.randint(45, 59)).zfill(2)
     elif value_ea != 12:
         value_va = str(almoco + 1).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
 
-    # -----------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------
 
     if almoco == 11:
         value_out = str(almoco + 7).zfill(2) + ':' + str(random.randint(0, 14)).zfill(2)
@@ -170,7 +174,6 @@ def work_schedule_update(request, id):
         form = WorkScheduleForm(instance=work_schedule)
         # Recupera a instancia de form e chama a função add_work_schedule_item
         # para popular o detalhe com os dias do mês e o usuário poderá editar.
-        #add_work_schedule_item(period=work_schedule.period, key=work_schedule.id)
 
         formset = WorkScheduleItemFormSet(instance=work_schedule)
 
