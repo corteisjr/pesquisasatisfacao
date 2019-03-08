@@ -18,7 +18,7 @@ from pesquisasatisfacao.accounts.forms import (RegistrationForm,
                                                WorkScheduleForm,
                                                WorkScheduleItemFormSet)
 
-from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem
+from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem, Feriado
 from pesquisasatisfacao.utils import render_to_pdf
 
 
@@ -106,19 +106,28 @@ def add_work_schedule_item(period, key):
         # my_date = calendar.day_name[strdate.weekday()]
 
         (value_en, value_ea, value_va, value_out) = random_time()
-        if my_date not in(5, 6, 7):
+
+        ad = str(day_number).zfill(2) + '/' + m.zfill(2)
+
+        if Feriado.objects.filter(abbreviated_date=ad):
             WorkScheduleItem.objects.get_or_create(day=strdate,
-                                                   week_day=my_date,
-                                                   workschedule=work_schedule,
-                                                   entrance=value_en,
-                                                   lunch_entrance=value_ea,
-                                                   lunch_out=value_va,
-                                                   exit=value_out)
-        else:
-            WorkScheduleItem.objects.get_or_create(day=strdate,
-                                                   week_day=my_date,
+                                                   week_day=7,
                                                    workschedule=work_schedule,
                                                    )
+        else:
+            if my_date not in (5, 6, 7):
+                WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                       week_day=my_date,
+                                                       workschedule=work_schedule,
+                                                       entrance=value_en,
+                                                       lunch_entrance=value_ea,
+                                                       lunch_out=value_va,
+                                                       exit=value_out)
+            else:
+                WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                       week_day=my_date,
+                                                       workschedule=work_schedule,
+                                                       )
 
 
 def work_schedule_create(request):
@@ -136,7 +145,6 @@ def work_schedule_create(request):
 
             a, b, c, my_id, e, f = new.get_absolute_url().split('/')
             add_work_schedule_item(period=request.POST['period'], key=my_id)
-            
             return HttpResponseRedirect(new.get_absolute_url())
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
