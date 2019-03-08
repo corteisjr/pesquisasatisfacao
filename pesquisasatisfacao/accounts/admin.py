@@ -31,6 +31,6 @@ class WorkScheduleItemAdmin(admin.ModelAdmin):
 
 @admin.register(Feriado)
 class FeriadoAdmin(admin.ModelAdmin):
-    list_display = ('description', 'date', 'abbreviated_date', 'permanent')
-    search_fields = ('description', 'date', 'abbreviated_date', 'permanent')
+    list_display = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
+    search_fields = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
 

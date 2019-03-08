@@ -21,6 +21,15 @@ body {
     width: 120%;
 }
 
+table th, table td {
+    padding: 0px 0px;
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+
 #width-100{
     width: 100%;
 }

@@ -51,10 +51,15 @@ class Horario(models.Model):
 
 
 class Feriado(models.Model):
-    description = models.CharField('Descrição do Feriado.', max_length=100, null=False, blank=False)
+    KIND_CHOICES = (
+        ('7', 'Feriado'),
+        ('9', 'Compensação'),)
+
+    description = models.CharField('Descrição do Dia.', max_length=100, null=False, blank=False)
     date = models.DateField('Data',)
     abbreviated_date = models.CharField('Dia/Mês dd/mm', max_length=5, null=True, blank=True)
     permanent = models.BooleanField('Feriado fixo',)
+    kind = models.CharField('Tipo', max_length=1, choices=KIND_CHOICES)
 
     class Meta:
         verbose_name = 'Feriado'
@@ -104,6 +109,7 @@ class WorkScheduleItem(models.Model):
         ('5', 'Sábado'),
         ('7', 'Feriado'),
         ('8', 'Faltou'),
+        ('9', 'Compensação'),
     )
 
     workschedule = models.ForeignKey("accounts.workschedule", null=False, blank=False, related_name="children",

@@ -108,12 +108,25 @@ def add_work_schedule_item(period, key):
         (value_en, value_ea, value_va, value_out) = random_time()
 
         ad = str(day_number).zfill(2) + '/' + m.zfill(2)
-
-        if Feriado.objects.filter(abbreviated_date=ad):
-            WorkScheduleItem.objects.get_or_create(day=strdate,
-                                                   week_day=7,
-                                                   workschedule=work_schedule,
-                                                   )
+        especial = Feriado.objects.filter(abbreviated_date=ad)
+        # Se a data cadastrada coincidir com feríados e compensação cadastrados via Admin
+        # Ele preenche com 7 ou 9 e trata lá no template
+        if especial:
+            for e in especial:
+                print(e.description)
+                if e.kind == '9':
+                    WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                           week_day=e.kind,
+                                                           workschedule=work_schedule,
+                                                           entrance=value_en,
+                                                           lunch_entrance=value_ea,
+                                                           lunch_out=value_va,
+                                                           exit=value_out)
+                else:
+                    WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                           week_day=e.kind,
+                                                           workschedule=work_schedule,
+                                                           )
         else:
             if my_date not in (5, 6, 7):
                 WorkScheduleItem.objects.get_or_create(day=strdate,

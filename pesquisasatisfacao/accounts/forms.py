@@ -65,4 +65,4 @@ WorkScheduleItemFormSet = inlineformset_factory(WorkSchedule, WorkScheduleItem,
                                                 exclude=('id',),
                                                 can_delete=True,
                                                 fields=('day', 'week_day', 'entrance', 'lunch_entrance', 'lunch_out', 'exit'),
-                                                extra=1)
+                                                extra=0)
