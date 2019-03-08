@@ -134,6 +134,9 @@ def work_schedule_create(request):
             new.save()
             # form.save_m2m()
 
+            a, b, c, my_id, e, f = new.get_absolute_url().split('/')
+            add_work_schedule_item(period=request.POST['period'], key=my_id)
+            
             return HttpResponseRedirect(new.get_absolute_url())
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
@@ -174,6 +177,7 @@ def work_schedule_update(request, id):
         form = WorkScheduleForm(instance=work_schedule)
         # Recupera a instancia de form e chama a função add_work_schedule_item
         # para popular o detalhe com os dias do mês e o usuário poderá editar.
+        # add_work_schedule_item(period=work_schedule.period, key=work_schedule.id)
 
         formset = WorkScheduleItemFormSet(instance=work_schedule)
 

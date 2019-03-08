@@ -119,6 +119,7 @@ class WorkScheduleItem(models.Model):
     class Meta:
         verbose_name = 'Ficha de Visita Detalhe'
         verbose_name_plural = 'Fichas de Visita Detalhe'
+        unique_together = (('workschedule', 'day'),)
 
     @property
     def dia_semana(self):

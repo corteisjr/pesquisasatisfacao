@@ -35,7 +35,7 @@ def person_client_create(request):
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
             print(form)
-            return render(request, 'person_create.html', {'form':form})
+            return render(request, 'person_create.html', {'form': form})
     else:
         context = {'form': ClientForm()}
         return render(request, 'person_create.html', context)
