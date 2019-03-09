@@ -29,8 +29,8 @@ class WorkScheduleItemAdmin(admin.ModelAdmin):
     search_fields = ('day', 'entrance', 'lunch_entrance', 'lunch_out', 'exit')
 
 
-@admin.register(Feriado)
-class FeriadoAdmin(admin.ModelAdmin):
-    list_display = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
-    search_fields = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
+# @admin.register(Feriado)
+# class FeriadoAdmin(admin.ModelAdmin):
+#     list_display = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
+#     search_fields = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
 
