@@ -115,6 +115,7 @@ def add_work_schedule_item(period, key):
             for e in especial:
                 print(e.description)
                 if e.kind == '9':
+                    print(e.kind, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                     WorkScheduleItem.objects.get_or_create(day=strdate,
                                                            week_day=e.kind,
                                                            workschedule=work_schedule,
@@ -156,9 +157,10 @@ def work_schedule_create(request):
             new.save()
             # form.save_m2m()
 
-            # a, b, c, my_id, e, f = new.get_absolute_url().split('/')
-            # add_work_schedule_item(period=request.POST['period'], key=my_id)
-            # return HttpResponseRedirect(new.get_absolute_url())
+            a, b, c, my_id, e, f = new.get_absolute_url().split('/')
+            add_work_schedule_item(period=request.POST['period'], key=my_id)
+            return HttpResponseRedirect(new.get_absolute_url())
+            # return HttpResponseRedirect('/')
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
             # person_instance = Person.objects.get(pk=request.session["person_id"])
@@ -166,8 +168,7 @@ def work_schedule_create(request):
     else:
         from datetime import date
         context = {'form': WorkScheduleForm(initial={'user': request.user,
-                                                     'period': date.today().strftime('%m/%Y')})}
-        # Caso precise preencher mais de um campo no form.
+                                                     'period': date.today().strftime('%m/%Y')})}        # Caso precise preencher mais de um campo no form.
         # context = {'form': SearchForm(initial={'person': pessoa_id, 'search_key': '11-2018'})}
 
         # Exclui variável da session

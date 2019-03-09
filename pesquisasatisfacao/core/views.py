@@ -383,7 +383,7 @@ search_list2 = SearchDetailWiew.as_view()
 
 
 def pesquisa_create(request):
-    success_message = 'The Search was edited correctly.'
+    # success_message = 'The Search was edited correctly.'
     if request.method == 'POST':
         form = SearchForm(request.POST)
         formset = SearchItemFormSet(request.POST)
