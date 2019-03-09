@@ -59,7 +59,7 @@ class Feriado(models.Model):
     date = models.DateField('Data',)
     abbreviated_date = models.CharField('Dia/Mês dd/mm', max_length=5, null=True, blank=True)
     permanent = models.BooleanField('Feriado fixo',)
-    
+    kind = models.CharField('Tipo de data', max_length=1, choices=KIND_CHOICES)
 
     class Meta:
         verbose_name = 'Feriado'
