@@ -159,8 +159,8 @@ def work_schedule_create(request):
 
             a, b, c, my_id, e, f = new.get_absolute_url().split('/')
             add_work_schedule_item(period=request.POST['period'], key=my_id)
-            return HttpResponseRedirect(new.get_absolute_url())
-            # return HttpResponseRedirect('/')
+            # return HttpResponseRedirect(new.get_absolute_url())
+            return HttpResponseRedirect('/accounts/ficha/' + str(new.id) + '/editar/')
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
             # person_instance = Person.objects.get(pk=request.session["person_id"])
