@@ -156,9 +156,9 @@ def work_schedule_create(request):
             new.save()
             # form.save_m2m()
 
-            a, b, c, my_id, e, f = new.get_absolute_url().split('/')
-            add_work_schedule_item(period=request.POST['period'], key=my_id)
-            return HttpResponseRedirect(new.get_absolute_url())
+            # a, b, c, my_id, e, f = new.get_absolute_url().split('/')
+            # add_work_schedule_item(period=request.POST['period'], key=my_id)
+            # return HttpResponseRedirect(new.get_absolute_url())
         else:
             print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
             # person_instance = Person.objects.get(pk=request.session["person_id"])
