@@ -54,11 +54,11 @@ class WorkScheduleForm(forms.ModelForm):
     class Meta:
         model = WorkSchedule
         fields = '__all__'
-        exclude = ()
+        exclude = ('user',)
 
     layout = Layout(
         Fieldset("Preencha com o Período",
-                 Row('user', 'period'),),)
+                 Row('period'),),)
 
 
 WorkScheduleItemFormSet = inlineformset_factory(WorkSchedule, WorkScheduleItem,

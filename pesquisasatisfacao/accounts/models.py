@@ -7,6 +7,19 @@ from django.db import models
 # Create your models here.
 from django.urls import reverse
 
+KIND_CHOICES = (
+    ('6', 'Domingo'),
+    ('0', 'Segunda'),
+    ('1', 'Terça'),
+    ('2', 'Quarta'),
+    ('3', 'Quinta'),
+    ('4', 'Sexta'),
+    ('5', 'Sábado'),
+    ('7', 'Feriado'),
+    ('8', 'Faltou'),
+    ('9', 'Compensação'),
+)
+
 
 class UserInfo(User):
     nomecompleto = models.CharField('Nome Completo', max_length=100, null=False, blank=False)
@@ -50,11 +63,8 @@ class Horario(models.Model):
         return self.description
 
 
+# Código do feriado = 7
 class Feriado(models.Model):
-    KIND_CHOICES = (
-        ('7', 'Feriado'),
-        ('9', 'Compensação'),)
-
     description = models.CharField('Descrição do Dia.', max_length=100, null=False, blank=False)
     date = models.DateField('Data',)
     abbreviated_date = models.CharField('Dia/Mês dd/mm', max_length=5, null=True, blank=True)
@@ -69,6 +79,27 @@ class Feriado(models.Model):
         self.description = self.description.upper()
         self.abbreviated_date = self.date.strftime('%d/%m')
         super(Feriado, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.description
+
+
+# Código da compensação = 9
+class Compensacao(models.Model):
+    description = models.CharField('Descrição do Dia.', max_length=100, null=False, blank=False)
+    date = models.DateField('Data',)
+    abbreviated_date = models.CharField('Dia/Mês dd/mm', max_length=5, null=True, blank=True)
+    kind = models.CharField('Tipo de data', max_length=1, choices=KIND_CHOICES)
+    users = models.ManyToManyField(User, related_name="Users", verbose_name="Usuário")
+
+    class Meta:
+        verbose_name = 'Dia compensado'
+        verbose_name_plural = 'Dias compensados'
+
+    def save(self, *args, **kwargs):
+        self.description = self.description.upper()
+        self.abbreviated_date = self.date.strftime('%d/%m')
+        super(Compensacao, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.description
@@ -99,24 +130,11 @@ class WorkSchedule(models.Model):
 
 
 class WorkScheduleItem(models.Model):
-    WEEKDAY_CHOICES = (
-        ('6', 'Domingo'),
-        ('0', 'Segunda'),
-        ('1', 'Terça'),
-        ('2', 'Quarta'),
-        ('3', 'Quinta'),
-        ('4', 'Sexta'),
-        ('5', 'Sábado'),
-        ('7', 'Feriado'),
-        ('8', 'Faltou'),
-        ('9', 'Compensação'),
-    )
-
     workschedule = models.ForeignKey("accounts.workschedule", null=False, blank=False, related_name="children",
                                      on_delete=models.CASCADE,
                                      verbose_name="Ficha")
     day = models.DateField('Dt. Agenda', )
-    week_day = models.CharField('Dia Semana', max_length=1, choices=WEEKDAY_CHOICES)
+    week_day = models.CharField('Dia Semana', max_length=1, choices=KIND_CHOICES)
     entrance = models.TimeField('Entrada', max_length=5, null=True, blank=True)
     lunch_entrance = models.TimeField('Saída almoço', max_length=5, null=True, blank=True)
     lunch_out = models.TimeField('Volta almoço', max_length=5, null=True, blank=True)
@@ -127,10 +145,10 @@ class WorkScheduleItem(models.Model):
         verbose_name_plural = 'Fichas de Visita Detalhe'
         unique_together = (('workschedule', 'day'),)
 
-    @property
-    def dia_semana(self):
-        my_date = date.self.day
-        return calendar.day_name[my_date.weekday()]
+    # @property
+    # def dia_semana(self):
+    #     my_date = date.self.day
+    #     return calendar.day_name[my_date.weekday()]
 
     def __str__(self):
         return self.workschedule.period

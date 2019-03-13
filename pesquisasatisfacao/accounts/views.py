@@ -18,7 +18,7 @@ from pesquisasatisfacao.accounts.forms import (RegistrationForm,
                                                WorkScheduleForm,
                                                WorkScheduleItemFormSet)
 
-from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem, Feriado
+from pesquisasatisfacao.accounts.models import WorkSchedule, WorkScheduleItem, Feriado, Compensacao
 from pesquisasatisfacao.utils import render_to_pdf
 
 
@@ -94,7 +94,7 @@ def schedule(request):
         return render(request, 'schedule.html', context)
 
 
-def add_work_schedule_item(period, key):
+def add_work_schedule_item(period, key, feriado_user):
     year_month = str(period)
     m, y = year_month.split('/')
     first_weekday, num_days_in_month = calendar.monthrange(int(y), int(m))
@@ -108,26 +108,40 @@ def add_work_schedule_item(period, key):
         (value_en, value_ea, value_va, value_out) = random_time()
 
         ad = str(day_number).zfill(2) + '/' + m.zfill(2)
-        especial = Feriado.objects.filter(abbreviated_date=ad)
+        sabado = Compensacao.objects.prefetch_related().filter(abbreviated_date=ad, users=feriado_user)
+        feriado = Feriado.objects.prefetch_related().filter(abbreviated_date=ad)
+
         # Se a data cadastrada coincidir com feríados e compensação cadastrados via Admin
         # Ele preenche com 7 ou 9 e trata lá no template
-        if especial:
-            for e in especial:
-                print(e.description)
-                if e.kind == '9':
-                    print(e.kind, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                    WorkScheduleItem.objects.get_or_create(day=strdate,
-                                                           week_day=e.kind,
-                                                           workschedule=work_schedule,
-                                                           entrance=value_en,
-                                                           lunch_entrance=value_ea,
-                                                           lunch_out=value_va,
-                                                           exit=value_out)
-                else:
-                    WorkScheduleItem.objects.get_or_create(day=strdate,
-                                                           week_day=e.kind,
-                                                           workschedule=work_schedule,
-                                                           )
+        if sabado:
+            for s in sabado:
+                # if e.kind == '9':
+                WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                       week_day=s.kind,
+                                                       workschedule=work_schedule,
+                                                       entrance=value_en,
+                                                       lunch_entrance=value_ea,
+                                                       lunch_out=value_va,
+                                                       exit=value_out)
+                # else:
+                #     WorkScheduleItem.objects.get_or_create(day=strdate,
+                #                                            week_day=e.kind,
+                #                                            workschedule=work_schedule,
+                #                                            )
+        elif feriado:
+            for f in feriado:
+                WorkScheduleItem.objects.get_or_create(day=strdate,
+                                                       week_day=f.kind,
+                                                       workschedule=work_schedule,
+                                                       entrance=value_en,
+                                                       lunch_entrance=value_ea,
+                                                       lunch_out=value_va,
+                                                       exit=value_out)
+                # else:
+                #     WorkScheduleItem.objects.get_or_create(day=strdate,
+                #                                            week_day=e.kind,
+                #                                            workschedule=work_schedule,
+                #
         else:
             if my_date not in (5, 6, 7):
                 WorkScheduleItem.objects.get_or_create(day=strdate,
@@ -154,11 +168,12 @@ def work_schedule_create(request):
         if form.is_valid():
             print('<<<<==== FORM VALIDO ====>>>>')
             new = form.save(commit=False)
+            new.user = request.user
             new.save()
             # form.save_m2m()
 
             a, b, c, my_id, e, f = new.get_absolute_url().split('/')
-            add_work_schedule_item(period=request.POST['period'], key=my_id)
+            add_work_schedule_item(period=request.POST['period'], key=my_id, feriado_user=request.user)
             # return HttpResponseRedirect(new.get_absolute_url())
             return HttpResponseRedirect('/accounts/ficha/' + str(new.id) + '/editar/')
         else:

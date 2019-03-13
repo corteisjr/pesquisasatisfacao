@@ -4,7 +4,7 @@ from pesquisasatisfacao.accounts.models import (UserInfo,
                                                 Horario,
                                                 WorkSchedule,
                                                 WorkScheduleItem,
-                                                Feriado)
+                                                Feriado, Compensacao)
 
 
 @admin.register(UserInfo)
@@ -33,4 +33,10 @@ class WorkScheduleItemAdmin(admin.ModelAdmin):
 class FeriadoAdmin(admin.ModelAdmin):
     list_display = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
     search_fields = ('description', 'date', 'abbreviated_date', 'permanent', 'kind')
+
+
+@admin.register(Compensacao)
+class CompensacaoAdmin(admin.ModelAdmin):
+    list_display = ('description', 'date', 'abbreviated_date', 'kind')
+    search_fields = ('description', 'date', 'abbreviated_date', 'kind')
 
