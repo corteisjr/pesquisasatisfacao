@@ -55,7 +55,7 @@ class Client(models.Model):
     bairro = models.CharField('Bairro', max_length=50, null=False, blank=False)
     cidade = models.CharField('Cidade', max_length=50, null=False, blank=False)
     estado = models.CharField('Estado', max_length=10, null=False, blank=False)
-    is_representative = models.BooleanField('É representante?')
+    is_representative = models.BooleanField('É representante?', default=False)
     representative = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE,
                                        verbose_name="Representante")
     products = models.ManyToManyField('core.product', related_name="products", verbose_name="Produtos")

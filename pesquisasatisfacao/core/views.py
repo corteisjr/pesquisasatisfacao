@@ -135,7 +135,7 @@ def question_create(request):
         return render(request, 'question_create.html', context)
 
 
-def question_populate():
+def question_populate(request):
 
     from pesquisasatisfacao.core import create_data
 
