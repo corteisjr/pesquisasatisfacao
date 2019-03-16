@@ -7,6 +7,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('', include(frontend_urls)),
 
+    path('representacao/novo/', views.person_representative_create, name='person_representative_create'),
+    path('representacao/<int:pk>/editar/', views.person_representative_update, name='person_representative_update'),
+    path('representacao/listar/', views.person_representative_list, name='person_representative_list'),
 
 
     path('cliente/novo/', views.person_client_create, name='person_client_create'),
@@ -16,11 +19,12 @@ urlpatterns = [
     path('cliente/<int:pk>/pesquisas/', views.person_client_detail, name='person_client_detail'),
 
     # Usa a mesma view de cliente
-    path('representacao/novo/', views.person_client_create, name='person_client_create'),
-    path('representacao/listar/', views.person_representative_list, name='person_representative_list'),
+
+
 
 
     path('pergunta/nova/', views.question_create, name='question_create'),
+    path('pergunta/<int:pk>/editar/', views.question_update, name='question_update'),
     path('pergunta/popular/', views.question_populate, name='question_populate'),
     path('perguntas/listar/', views.question_list, name='question_list'),
 

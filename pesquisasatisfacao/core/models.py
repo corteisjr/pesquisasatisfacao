@@ -2,31 +2,6 @@ from django.db import models
 from django.urls import reverse
 
 
-# class Person(models.Model):
-#     cdalterdata = models.IntegerField('Cód. Alterdata', db_index=True, unique=True)
-#     name = models.CharField('Nome', max_length=100)
-#     phone = models.CharField('Telefone', max_length=11, null=True, blank=True)
-#
-#     class Meta:
-#         ordering = ('name',)
-#         verbose_name = 'Pessoa'
-#         verbose_name_plural = 'Pessoas'
-#
-#     def __str__(self):
-#         return self.name
-#
-#     def to_dict_json(self):
-#         return {
-#             'cdalterdata': self.cdalterdata,
-#             'name': self.name,
-#             'email': self.email,
-#             'phone': self.phone,
-#             # 'gender': self.get_gender_display(),
-#         }
-
-    # def get_absolute_url(self):
-    #     return reverse('pesquisa_alter:add_pesquisa', args=[str(self.id)])
-
 class Product(models.Model):
     name = models.CharField('Nome', max_length=100)
 
@@ -106,6 +81,9 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
+    def get_absolute_url(self):
+        return reverse('question_update', args=[str(self.pk)])
+
 
 class Search(models.Model):
     search_key = models.CharField(
@@ -143,57 +121,26 @@ class Search(models.Model):
 # def post_save_search(sender, instance, created,  **kwargs):
 #     if created:
 #         questions = Question.objects.all()
-        #search = Search.objects.filter(pk=instance.pk)
-# WTTD
-        # for question in questions:
-        #     obj = SearchItem(search_id=instance.pk, question_id=question.pk, response=False)
-        #     from django.core.exceptions import ValidationError
-        #     try:
-        #         print(created, obj.search, obj.question)
-        #         obj.full_clean()
-        #         obj.save()
-        #     except ValidationError:
-        #         # O ideal nesse caso seria enviar algum tipo de mensagem ao usuário informando que a pergunta não foi salva
-        #         # mas aqui estou apenas tratando a exceção e passando direto pelo erro.
-        #         pass
-
-
-# Elysson funciona com Pesquisa/nova
+#         # search = Search.objects.filter(pk=instance.pk)
+#
+#         lista = []
+#
+#         # print(worksheet.nrows)
 #         for question in questions:
-#             try:
-#                 print(created, instance.pk, question.pk)
-#                 SearchItem.objects.get_or_create(
-#                     search_id=instance.pk,
-#                     question_id=question.pk,
-#                     response=False,
-#                 )
-#             except SearchItem.DoesNotExist:
-#                 continue  # ou pass
-
-
-def post_save_search(sender, instance, created,  **kwargs):
-    if created:
-        questions = Question.objects.all()
-        # search = Search.objects.filter(pk=instance.pk)
-
-        lista = []
-
-        # print(worksheet.nrows)
-        for question in questions:
-            print('search_id=', instance.pk, 'question_id=', question.pk)
-            lista.append(
-                SearchItem(search_id=instance.pk,
-                           question_id=question.pk,
-                           response=False,
-                           )
-            )
-
-        SearchItem.objects.bulk_create(lista)
-
-
-models.signals.post_save.connect(
-    post_save_search, sender=Search, dispatch_uid='post_save_search'
-)
+#             print('search_id=', instance.pk, 'question_id=', question.pk)
+#             lista.append(
+#                 SearchItem(search_id=instance.pk,
+#                            question_id=question.pk,
+#                            response=False,
+#                            )
+#             )
+#
+#         SearchItem.objects.bulk_create(lista)
+#
+#
+# models.signals.post_save.connect(
+#     post_save_search, sender=Search, dispatch_uid='post_save_search'
+# )
 
 
 class SearchItem(models.Model):

@@ -24,23 +24,49 @@
 </head>
 
 <body>
+
+    <!-- Dropdown Structure -->
+    <ul id="drp_clientes" class="dropdown-content">
+      <li><a href="{% url 'person_client_create' %}"><i class="material-icons">person</i>Novo Cliente</a></li>
+      <li><a href="{% url 'person_client_list' %}"><i class="material-icons">format_list_bulleted</i>Lista Clientes</a></li>
+      <li class="divider"></li>
+      <li><a href="{% url 'accounts:work_schedule_create' %}"><i class="material-icons">date_range</i>Cadastro Ficha</a></li>
+      <li><a href="{% url 'accounts:work_schedule_list' %}"><i class="material-icons">format_list_bulleted</i>Listar Fichas</a></li>
+      <li><a href="#!">em breve...</a></li>
+    </ul>
+
+    <ul id="drp_questions" class="dropdown-content">
+      <li><a href="{% url 'question_create' %}"><i class="material-icons">question_answer</i>Cadastrar nova Pergunta</a></li>
+      <li><a href="{% url 'question_list' %}"><i class="material-icons">format_list_bulleted</i>Lista de Perguntas</a></li>
+      <li class="divider"></li>
+      <li><a href="#!">em breve...</a></li>
+    </ul>
+
+    <ul id="drp_representative" class="dropdown-content">
+      <li><a href="{% url 'person_representative_create' %}"><i class="material-icons">person_pin</i>Novo Representante</a></li>
+      <li><a href="{% url 'person_representative_list' %}"><i class="material-icons">format_list_bulleted</i>Lista Representantes</a></li>
+      <li class="divider"></li>
+      <li><a href="#!">em breve...</a></li>
+    </ul>
+
     <!--NAVBAR-->
     <nav class="#1a237e indigo darken-4 col s12 m6">
         <div class="nav-wrapper">
         <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large"><i class="material-icons">menu</i></a>
         <a href="" class="brand-logo">Alterdata Filiais</a>
             <ul class="right hide-on-med-and-down">
-            <li><a href="{% url 'accounts:work_schedule_create' %}">Cadastro Ficha</a></li>
-            <li><a href="{% url 'accounts:work_schedule_list' %}">Listar Fichas</a></li>
-            <li><a href="{% url 'person_client_create' %}">Cliente</a></li>
-            <li><a href="{% url 'person_client_list' %}">Lista Clientes</a></li>
-            <li><a href="{% url 'question_create' %}">Cadastrar nova Pergunta</a></li>
+            <li><a class="dropdown-trigger" href="#!" data-target="drp_clientes">Clientes<i class="material-icons right">arrow_drop_down</i></a></li>
+            <li><a class="dropdown-trigger" href="#!" data-target="drp_questions">Pesquisa<i class="material-icons right">arrow_drop_down</i></a></li>
+            <li><a class="dropdown-trigger" href="#!" data-target="drp_representative">Representantes<i class="material-icons right">arrow_drop_down</i></a></li>
+
             {% if user.is_authenticated %}
                 <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
             {% else %}
                 <li><a href="{% url 'accounts:register' %}">Cadastre-se</a></li>
                 <li><a href="{% url 'accounts:login' %}">Login</a></li>
             {% endif %}
+
+
             </ul>
         </div>
     </nav>
@@ -99,7 +125,7 @@
             $(document).ready(function(){
                 //MATERIALIZE
                 $('.sidenav').sidenav();
-                $('.dropdown-trigger').dropdown();
+                $('.dropdown-trigger').dropdown({ hover: true, constrainWidth: false });
                 $('.fixed-action-btn').floatingActionButton();
                 $('.datepicker').datepicker(
                     {

@@ -2,16 +2,13 @@ from django.core.serializers import json
 import json
 from django.db import transaction
 from django.db.models import Count, Q
-from django.forms import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-
-from django.views.generic import TemplateView
 
 from pesquisasatisfacao.core.forms import (QuestionForm,
                                            ClientForm,
                                            SearchForm,
-                                           SearchItemFormSet)
+                                           SearchItemFormSet, RepresentativeForm)
 
 from pesquisasatisfacao.core.models import Search, Question, Client, SearchItem
 
@@ -28,6 +25,7 @@ def person_client_create(request):
         if form.is_valid():
             print('<<<<==== FORM VALIDO ====>>>>')
             new = form.save(commit=False)
+            new.is_representative = False
             new.save()
             # form.save_m2m()
 
@@ -39,6 +37,52 @@ def person_client_create(request):
     else:
         context = {'form': ClientForm()}
         return render(request, 'person_create.html', context)
+
+
+def person_representative_create(request):
+    if request.method == 'POST':
+        form = RepresentativeForm(request.POST)
+
+        if form.is_valid():
+            print('<<<<==== FORM VALIDO ====>>>>')
+            new = form.save(commit=False)
+            new.is_representative = True
+            new.save()
+            # form.save_m2m()
+
+            return HttpResponseRedirect('/cliente/listar')
+        else:
+            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+            print(form)
+            return render(request, 'person_create.html', {'form': form})
+    else:
+        context = {'form': RepresentativeForm()}
+        return render(request, 'person_create.html', context)
+
+
+def person_representative_update(request, pk):
+    # Pega a chave da URL acima com (request, pk)
+    # joga na variável invoice na linha abaixo passando o modelo MESTRE e os parâmetros que desejo como filtro
+    client = get_object_or_404(Client, pk=pk)
+
+    if request.method == 'POST':
+        form = RepresentativeForm(request.POST, instance=client)
+
+        if form.is_valid():
+
+            print('<<<<==== FORM VALIDO ====>>>>')
+            new = form.save(commit=False)
+            new.save()
+            form.save_m2m()
+
+            return redirect('/representacao/listar/')
+        else:
+            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+            return render(request, 'person_create.html', {'form': form})
+    else:
+        form = RepresentativeForm(instance=client)
+    context = {'form': form}
+    return render(request, 'person_create.html', context)
 
 
 def person_client_update(request, pk):
@@ -109,96 +153,7 @@ def person_representative_list(request):
     else:
         clients = Client.objects.filter(is_representative=True)
     context = {'clients': clients}
-    return render(request, 'person_client_list.html', context)
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-
-def question_create(request):
-    if request.method == 'POST':
-        form = QuestionForm(request.POST)
-
-        if form.is_valid():
-            print('<<<<==== FORM VALIDO ====>>>>')
-            new = form.save(commit=False)
-            new.save()
-            #form.save_m2m()
-
-            return HttpResponseRedirect('/perguntas/listar')
-        else:
-            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-            print(form)
-            return render(request, 'question_create.html', {'form': form})
-    else:
-        context = {'form': QuestionForm()}
-        return render(request, 'question_create.html', context)
-
-
-def question_populate(request):
-
-    from pesquisasatisfacao.core import create_data
-
-    lista = []
-
-    for question in create_data.question_add:
-        obj = Question(**question)
-        lista.append(obj)
-
-    Question.objects.bulk_create(lista)
-
-    return HttpResponseRedirect('/perguntas/listar')
-
-
-def question_list(request):
-    questions = Question.objects.all().order_by("level", "id", "question")
-    return render(request, 'question_list.html', {'questions': questions})
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-
-def seach_create(request):
-
-        if request.method == 'POST':
-            form = SearchForm(request.POST)
-
-            if form.is_valid():
-                print('<<<<==== FORM VALIDO ====>>>>')
-                new = form.save(commit=False)
-                new.save()
-                # form.save_m2m()
-
-                # return HttpResponseRedirect('/pesquisa/listar')
-                return HttpResponseRedirect(new.get_absolute_url())
-                # return redirect(Search.get_absolute_url())
-            else:
-                print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
-                # person_instance = Person.objects.get(pk=request.session["person_id"])
-                return render(request, 'seach_create.html', {'form': form})
-        else:
-            if 'person_id' in request.session:
-                # Recupera variável da session
-                pessoa_id = request.session['person_id']
-                from datetime import date
-                context = {'form': SearchForm(initial={'person': pessoa_id,
-                                                       'search_key': date.today().strftime('%m-%Y')})}
-                # Caso precise preencher mais de um campo no form.
-                # context = {'form': SearchForm(initial={'person': pessoa_id, 'search_key': '11-2018'})}
-
-                # Exclui variável da session
-                del request.session['person_id']
-
-                return render(request, 'seach_create.html', context)
-            else:
-                # Caso person_id não exista na session ele redireciona para lista de clientes pesquisados.
-                return HttpResponseRedirect('/cliente/listar')
-
-
-def search_list(request):
-    seachs = Search.objects.all()
-    return render(request, 'search_list.html', {'seachs': seachs})
-
-# ----------------------------------------------------------------------------------------------------------------------
+    return render(request, 'person_representative_list.html', context)
 
 
 def person_client_detail(request, pk):
@@ -260,6 +215,74 @@ def person_client_detail(request, pk):
     }
 
     return render(request, 'person_client_detail.html', context)
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def question_create(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+
+        if form.is_valid():
+            print('<<<<==== FORM VALIDO ====>>>>')
+            new = form.save(commit=False)
+            new.save()
+            #form.save_m2m()
+
+            return HttpResponseRedirect('/perguntas/listar')
+        else:
+            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+            print(form)
+            return render(request, 'question_create.html', {'form': form})
+    else:
+        context = {'form': QuestionForm()}
+        return render(request, 'question_create.html', context)
+
+
+def question_update(request, pk):
+    # Pega a chave da URL acima com (request, pk)
+    # joga na variável invoice na linha abaixo passando o modelo MESTRE e os parâmetros que desejo como filtro
+    question = get_object_or_404(Question, pk=pk)
+
+    if request.method == 'POST':
+        form = QuestionForm(request.POST, instance=question)
+
+        if form.is_valid():
+
+            print('<<<<==== FORM VALIDO ====>>>>')
+            new = form.save(commit=False)
+            new.save()
+            form.save_m2m()
+
+            return HttpResponseRedirect('/perguntas/listar')
+            # return redirect('/pergunta/' + str(question.pk) + '/editar')
+        else:
+            print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+            return render(request, 'question_create.html', {'form': form})
+    else:
+        form = QuestionForm(instance=question)
+    context = {'form': form}
+    return render(request, 'question_create.html', context)
+
+
+def question_populate(request):
+
+    from pesquisasatisfacao.core import create_data
+
+    lista = []
+
+    for question in create_data.question_add:
+        obj = Question(**question)
+        lista.append(obj)
+
+    Question.objects.bulk_create(lista)
+
+    return HttpResponseRedirect('/perguntas/listar')
+
+
+def question_list(request):
+    questions = Question.objects.all().order_by("level", "id", "question")
+    return render(request, 'question_list.html', {'questions': questions})
 
 
 def question_level_view(request):
@@ -339,47 +362,101 @@ def question_level_view2(request):
     return render(request, 'dash2.html', {'chart': dump})
 
 
-class SearchDetailWiew(TemplateView):
-    template_name = 'search.html'
+# ----------------------------------------------------------------------------------------------------------------------
+def add_search_item(search):
+    questions = Question.objects.all()
 
-    def get_formset(self, clear=False):
-        questionsformset = modelformset_factory(
-            Search, fields=('response',), can_delete=False, extra=0
-        )
-        # Soluçao alternativa
-        client = Client.objects.last()
-        if clear:
+    for question in questions:
+        SearchItem.objects.get_or_create(search=search, question=question, response='False')
 
-            formset = questionsformset(
-                queryset=Search.objects.filter(search_key='11/2018', person=client)
-            )
+
+def seach_create(request):
+
+        if request.method == 'POST':
+            form = SearchForm(request.POST)
+
+            if form.is_valid():
+                print('<<<<==== FORM VALIDO ====>>>>')
+                new = form.save(commit=False)
+                new.save()
+                # form.save_m2m()
+
+                search = Search.objects.get(id=new.id)
+                print(id, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                add_search_item(search)
+
+                # return HttpResponseRedirect('/pesquisa/listar')
+                return HttpResponseRedirect(new.get_absolute_url())
+                # return redirect(Search.get_absolute_url())
+            else:
+                print('<<<<==== AVISO DE FORMULARIO INVALIDO ====>>>>')
+                # person_instance = Person.objects.get(pk=request.session["person_id"])
+                return render(request, 'seach_create.html', {'form': form})
         else:
-            formset = questionsformset(
-                queryset=Search.objects.filter(search_key='11/2018', person=client),
-                data=self.request.POST or None
-            )
+            if 'person_id' in request.session:
+                # Recupera variável da session
+                pessoa_id = request.session['person_id']
+                from datetime import date
+                context = {'form': SearchForm(initial={'person': pessoa_id,
+                                                       'search_key': date.today().strftime('%m-%Y')})}
+                # Caso precise preencher mais de um campo no form.
+                # context = {'form': SearchForm(initial={'person': pessoa_id, 'search_key': '11-2018'})}
 
-        return formset
+                # Exclui variável da session
+                del request.session['person_id']
 
-    def get_context_data(self, **kwargs):
-        context = super(SearchDetailWiew, self).get_context_data(**kwargs)
-        context['formset'] = self.get_formset()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        formset = self.get_formset()
-        context = self.get_context_data(**kwargs)
-        if formset.is_valid():
-            print('Formulário válido!')
-            formset.save()
-            print('Dados salvos!')
-            context['formset'] = self.get_formset(clear=True)
-        else:
-            print(formset)
-        return self.render_to_response(context)
+                return render(request, 'seach_create.html', context)
+            else:
+                # Caso person_id não exista na session ele redireciona para lista de clientes pesquisados.
+                return HttpResponseRedirect('/cliente/listar')
 
 
-search_list2 = SearchDetailWiew.as_view()
+def search_list(request):
+    seachs = Search.objects.all()
+    return render(request, 'search_list.html', {'seachs': seachs})
+
+
+# class SearchDetailWiew(TemplateView):
+#     template_name = 'search.html'
+#
+#     def get_formset(self, clear=False):
+#         questionsformset = modelformset_factory(
+#             Search, fields=('response',), can_delete=False, extra=0
+#         )
+#         # Soluçao alternativa
+#         client = Client.objects.last()
+#         if clear:
+#
+#             formset = questionsformset(
+#                 queryset=Search.objects.filter(search_key='11/2018', person=client)
+#             )
+#         else:
+#             formset = questionsformset(
+#                 queryset=Search.objects.filter(search_key='11/2018', person=client),
+#                 data=self.request.POST or None
+#             )
+#
+#         return formset
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(SearchDetailWiew, self).get_context_data(**kwargs)
+#         context['formset'] = self.get_formset()
+#         return context
+#
+#     def post(self, request, *args, **kwargs):
+#         formset = self.get_formset()
+#         context = self.get_context_data(**kwargs)
+#         if formset.is_valid():
+#             print('Formulário válido!')
+#             formset.save()
+#             print('Dados salvos!')
+#             context['formset'] = self.get_formset(clear=True)
+#         else:
+#             print(formset)
+#         return self.render_to_response(context)
+#
+#
+# search_list2 = SearchDetailWiew.as_view()
 
 
 def pesquisa_create(request):
@@ -395,9 +472,8 @@ def pesquisa_create(request):
                 formset.instance = receipt
                 formset.save()
 
-                # return redirect('/cliente/listar/')
-                from hashlib import new
-                return redirect(new.get_absolut_address())
+                return redirect('/cliente/listar/')
+
     else:
         form = SearchForm()
         # initial={'author': request.user}
@@ -445,3 +521,4 @@ def pesquisa_update(request, pk):
     forms = [formset.empty_form] + formset.forms
     context = {'form': form, 'formset': formset, 'forms': forms}
     return render(request, 'receipt_form.html', context)
+# ----------------------------------------------------------------------------------------------------------------------

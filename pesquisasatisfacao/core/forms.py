@@ -22,29 +22,19 @@ from django.forms import inlineformset_factory
 #                  Row('phone')
 #                  )
 #     )
+SYSTEM_CHOICES = (
+    ('0', 'Pack'),
+    ('1', 'Shop'),
+    ('2', 'IShop'),
+    ('3', 'Immobile'),
+    ('4', 'Bimer'),
+)
 
 
 class ClientForm(forms.ModelForm):
-    SYSTEM_CHOICES = (
-        ('0', 'Pack'),
-        ('1', 'Shop'),
-        ('2', 'IShop'),
-        ('3', 'Immobile'),
-        ('4', 'Bimer'),
-    )
 
     representative = forms.ModelChoiceField(queryset=Client.objects.filter(is_representative=True), required=False,
                                             label="Representante (Matriz ou Filial)", )
-
-    # system = forms.MultipleChoiceField(label="Sistema(s)", widget=forms.CheckboxSelectMultiple(), choices=SYSTEM_CHOICES)
-    # system = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
-    #                                    required=False,
-    #                                    choices=SYSTEM_CHOICES)
-
-    # products = forms.ModelMultipleChoiceField(label='Produtos', queryset=Product.objects.all(),
-    #                                               widget=FilteredSelectMultiple("Produtos", is_stacked=False,
-    #                                                                             attrs={'class': 'material-ignore',
-    #                                                                                    'multiple': 'True'}))
 
     class Meta:
         model = Client
@@ -60,19 +50,51 @@ class ClientForm(forms.ModelForm):
             'bairro',
             'cidade',
             'estado',
-            'is_representative',
             'representative',
             'last_search',
             'products',
         )
+        exclude = ('is_representative',)
 
     layout = Layout(
-        Fieldset("Cadastro de Pessoa",
+        Fieldset("Cadastro de Cliente",
                  Row(Span3('cdalterdata'), Span9('name'), ),
-                 Row(Span3('is_representative'), Span9('representative'), ),
+                 Row(Span12('representative'), ),
                  Row(Span4('phone'), Span8('cpf_cnpj')),
                  Row(Span9('email'), Span3('last_search'), ),
                  Row(Span12('products'), ),
+                 ),
+        Fieldset('Endereço',
+                 Row(Span2('cep'), Span8('logradouro'), Span2('numero')),
+                 Row(Span5('bairro'), Span5('cidade'), Span2('estado')))
+        )
+
+
+class RepresentativeForm(forms.ModelForm):
+
+    class Meta:
+        model = Client
+        fields = (
+            'cdalterdata',
+            'name',
+            'phone',
+            'cpf_cnpj',
+            'email',
+            'cep',
+            'logradouro',
+            'numero',
+            'bairro',
+            'cidade',
+            'estado',
+            'products',
+        )
+        exclude = ('representative', 'is_representative', 'last_search',)
+
+    layout = Layout(
+        Fieldset("Cadastro de Filial ou Representação",
+                 Row(Span3('cdalterdata'), Span9('name'), ),
+                 Row(Span4('phone'), Span8('cpf_cnpj')),
+                 Row(Span5('email'), Span7('products'), ),
                  ),
         Fieldset('Endereço',
                  Row(Span2('cep'), Span8('logradouro'), Span2('numero')),
